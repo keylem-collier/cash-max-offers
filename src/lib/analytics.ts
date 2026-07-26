@@ -19,6 +19,10 @@ export function trackFunnelEvent(event: FunnelEvent) {
   window.dataLayer?.push({ event });
   window.gtag?.("event", event);
   window.fbq?.("trackCustom", event);
+
+  if (event === "call_clicked" || event === "email_clicked") {
+    window.fbq?.("track", "Contact");
+  }
 }
 
 export function trackLeadConversion() {
