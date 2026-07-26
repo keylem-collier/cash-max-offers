@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #f1ede4;
+  --paper-alpha: rgba(241, 237, 228, 0.92);
+  --panel: #fffaf0;
+  --surface: #e4ddd0;
+  --input: #fffdf7;
+  --ink: #12281e;
+  --muted: #56645c;
+  --placeholder: #6e7c74;
+  --forest: #12281e;
+  --forest-deep: #0d1d16;
+  --forest-muted: #315d45;
+  --forest-copy: #d3dfd6;
+  --accent: #2f7448;
+  --accent-on-dark: #78c48a;
+  --accent-strong: #245f3b;
+  --accent-soft: rgba(47, 116, 72, 0.17);
+  --line: #d2cabd;
+  --line-strong: #948f86;
+  --input-line: #868a84;
+  --error: #9c2f2f;
+  --error-line: #e0b8b8;
+  --error-soft: #fbefef;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-geist), "Geist", "Geist Fallback", ui-sans-serif,
+    system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--forest-deep);
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
