@@ -26,7 +26,7 @@ const business: EmailBusinessConfig = {
   phoneDisplay: "(404) 555-0179",
   phoneE164: "+14045550179",
   contactEmail: "offers@example.com",
-  siteUrl: "https://cashmaxoffers.com",
+  siteUrl: "https://cash-max-offers.vercel.app",
 };
 
 test("escapes unsafe HTML characters", () => {

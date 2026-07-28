@@ -26,7 +26,7 @@ const business: EmailBusinessConfig = {
   phoneDisplay: "",
   phoneE164: "",
   contactEmail: "offers@example.com",
-  siteUrl: "https://cashmaxoffers.com",
+  siteUrl: "https://cash-max-offers.vercel.app",
 };
 
 test("creates stable and distinct email idempotency keys", () => {
