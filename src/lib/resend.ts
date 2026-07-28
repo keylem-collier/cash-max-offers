@@ -29,13 +29,20 @@ function getResend() {
 
 function getDeliveryConfig() {
   const from = process.env.RESEND_FROM_EMAIL?.trim();
-  const ownerEmail = process.env.LEAD_OWNER_EMAIL?.trim();
+  const ownerEmails = (
+    process.env.LEAD_OWNER_EMAILS ??
+    process.env.LEAD_OWNER_EMAIL ??
+    ""
+  )
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
 
-  if (!from || !ownerEmail) {
+  if (!from || ownerEmails.length === 0) {
     throw new LeadDeliveryConfigurationError();
   }
 
-  return { from, ownerEmail };
+  return { from, ownerEmails };
 }
 
 function businessConfig(): EmailBusinessConfig {
@@ -62,14 +69,14 @@ function assertSendSucceeded(result: {
 
 export async function sendLeadEmails(lead: LeadIntakeValues) {
   const client = getResend();
-  const { from, ownerEmail } = getDeliveryConfig();
+  const { from, ownerEmails } = getDeliveryConfig();
   const business = businessConfig();
 
   return deliverLead({
     lead,
     business,
     from,
-    ownerEmail,
+    ownerEmails,
     send: async (request: DeliveryRequest) => {
       const result = await client.emails.send(
         {

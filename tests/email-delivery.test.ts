@@ -42,7 +42,7 @@ test("reports success only after owner and seller sends complete", async () => {
     lead,
     business,
     from: "Cash Max Offers <offers@example.com>",
-    ownerEmail: "owner@example.com",
+    ownerEmails: ["owner@example.com", "partner@example.com"],
     send: async (request) => {
       requests.push(request);
       return `${request.type}-id`;
@@ -52,6 +52,10 @@ test("reports success only after owner and seller sends complete", async () => {
   assert.equal(result.confirmationEmailSent, true);
   assert.equal(result.ownerEmailId, "owner_lead-id");
   assert.equal(result.sellerEmailId, "seller_confirmation-id");
+  assert.deepEqual(requests[0]?.to, [
+    "owner@example.com",
+    "partner@example.com",
+  ]);
   assert.equal(requests[0]?.idempotencyKey, "owner/lead_test_12345");
   assert.equal(requests[1]?.idempotencyKey, "seller/lead_test_12345");
 });
@@ -62,7 +66,7 @@ test("owner failure rejects the lead delivery", async () => {
       lead,
       business,
       from: "Cash Max Offers <offers@example.com>",
-      ownerEmail: "owner@example.com",
+      ownerEmails: ["owner@example.com"],
       send: async () => {
         throw new Error("Owner send failed");
       },
@@ -76,7 +80,7 @@ test("seller-only failure preserves owner success", async () => {
     lead,
     business,
     from: "Cash Max Offers <offers@example.com>",
-    ownerEmail: "owner@example.com",
+    ownerEmails: ["owner@example.com"],
     send: async (request) => {
       if (request.type === "seller_confirmation") {
         throw new Error("Seller send failed");

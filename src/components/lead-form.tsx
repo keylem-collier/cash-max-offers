@@ -449,10 +449,9 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             </div>
 
             <p className="text-sm leading-6 text-[var(--muted)]">
-              By submitting, you agree that Cash Max Offers may call, text, or
-              email you about this property. Consent is not a condition of
-              choosing a selling option. We do not use this form for recurring
-              automated marketing texts. Read our{" "}
+              By submitting, you agree Cash Max Offers may call, text, or email
+              about this property. Consent isn’t required to choose an option.
+              No recurring marketing texts. Read our{" "}
               <Link
                 href="/privacy"
                 className="font-semibold text-[var(--ink)] underline underline-offset-2"

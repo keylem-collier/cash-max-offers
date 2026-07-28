@@ -7,7 +7,7 @@ import type { LeadIntakeValues } from "./lead-intake";
 
 export type DeliveryRequest = {
   from: string;
-  to: string;
+  to: string | string[];
   replyTo: string;
   subject: string;
   text: string;
@@ -32,13 +32,13 @@ export async function deliverLead({
   lead,
   business,
   from,
-  ownerEmail,
+  ownerEmails,
   send,
 }: {
   lead: LeadIntakeValues;
   business: EmailBusinessConfig;
   from: string;
-  ownerEmail: string;
+  ownerEmails: string[];
   send: SendDeliveryRequest;
 }) {
   const ownerMessage = buildOwnerEmail(lead, business);
@@ -47,7 +47,7 @@ export async function deliverLead({
 
   const ownerEmailId = await send({
     from,
-    to: ownerEmail,
+    to: ownerEmails,
     replyTo: lead.email,
     subject: ownerMessage.subject,
     text: ownerMessage.text,
@@ -61,7 +61,7 @@ export async function deliverLead({
     const sellerEmailId = await send({
       from,
       to: lead.email,
-      replyTo: business.contactEmail || ownerEmail,
+      replyTo: business.contactEmail || ownerEmails[0]!,
       subject: sellerMessage.subject,
       text: sellerMessage.text,
       html: sellerMessage.html,
