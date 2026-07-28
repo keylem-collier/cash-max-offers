@@ -13,8 +13,8 @@ export function SiteFooter() {
         <div>
           <BrandMark />
           <p className="mt-5 max-w-sm text-sm leading-6 text-[var(--muted)]">
-            Clear selling options for Georgia homeowners, led by a licensed
-            local real-estate professional.
+            Clear selling options for Georgia homeowners, with direct guidance
+            from {siteConfig.realtorName}, a licensed local realtor.
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2">

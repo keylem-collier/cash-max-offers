@@ -91,7 +91,7 @@ export default function HomePage() {
         <section className="mx-auto grid min-h-[calc(100dvh-72px)] max-w-[1400px] gap-10 px-4 py-8 sm:px-6 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16 lg:px-10 lg:py-10">
           <div className="relative z-10 max-w-[650px]">
             <p className="mb-6 w-fit border-y border-[var(--ink)] py-2 text-xs font-bold uppercase leading-5 tracking-[0.14em]">
-              Georgia property advisory
+              {siteConfig.realtorName} · Licensed Georgia Realtor
             </p>
             <h1 className="text-balance text-[clamp(3.4rem,6.2vw,6.8rem)] font-black uppercase leading-[0.84] tracking-[-0.075em]">
               Sell fast.
@@ -139,11 +139,11 @@ export default function HomePage() {
           <div className="mx-auto grid max-w-[1400px] sm:grid-cols-2 lg:grid-cols-4">
             <TrustItem
               icon={BadgeCheck}
-              title="Licensed realtor"
+              title={`${siteConfig.realtorName}, licensed realtor`}
               body={
                 siteConfig.licenseNumber
                   ? `Georgia #${siteConfig.licenseNumber}`
-                  : "License publishes after approval"
+                  : "Local guidance, without the pressure"
               }
             />
             <TrustItem
@@ -279,26 +279,34 @@ export default function HomePage() {
         </section>
 
         <section className="mx-auto grid max-w-[1400px] gap-8 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[0.74fr_1.26fr] lg:px-10">
-          <div className="grid min-h-[360px] place-items-center border-2 border-dashed border-[var(--ink)] bg-[var(--surface)] p-8 text-center">
+          <div className="grid min-h-[360px] place-items-center border-2 border-[var(--ink)] bg-[var(--ink)] p-8 text-center text-[var(--panel)]">
             <div className="max-w-xs">
               <UserRound
                 aria-hidden
-                className="mx-auto size-11 text-[var(--accent)]"
+                className="mx-auto size-11 text-[var(--accent-on-dark)]"
                 strokeWidth={1.5}
               />
-              <p className="mt-5 font-black">Approved realtor headshot required</p>
+              <p className="mt-5 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--forest-copy)]">
+                Your local point of contact
+              </p>
+              <p className="mt-3 text-5xl font-black uppercase tracking-[-0.06em]">
+                {siteConfig.realtorName}
+              </p>
+              <p className="mt-3 font-semibold text-[var(--forest-copy)]">
+                Licensed Georgia Realtor
+              </p>
             </div>
           </div>
           <div className="self-center lg:pl-8">
             <h2 className="max-w-[720px] text-balance text-5xl font-black uppercase leading-[0.88] tracking-[-0.065em] sm:text-7xl">
-              Advice from a realtor.
+              Talk with {siteConfig.realtorName}.
               <span className="block text-[var(--accent)]">
                 Not a buying script.
               </span>
             </h2>
             <p className="mt-6 max-w-[600px] text-lg leading-7 text-[var(--muted)]">
-              {siteConfig.realtorName} explains both routes so you can choose
-              with the facts.
+              {siteConfig.realtorName} walks you through the cash and listing
+              paths so you can choose with the facts.
             </p>
             <div className="mt-7 border-l-4 border-[var(--accent)] pl-5">
               <p className="font-black">{siteConfig.brokerageName}</p>

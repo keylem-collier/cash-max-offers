@@ -22,7 +22,7 @@ export const siteConfig = {
     "https://cashmaxoffers.com",
   realtorName:
     readPublicValue(process.env.NEXT_PUBLIC_REALTOR_NAME) ||
-    "Licensed Georgia Realtor",
+    "Brad",
   brokerageName:
     readPublicValue(process.env.NEXT_PUBLIC_BROKERAGE_NAME) ||
     "Brokerage details pending approval",

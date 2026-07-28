@@ -20,7 +20,7 @@ export function SiteHeader() {
               kind="call"
               href={telHref()}
               className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-[6px] bg-[var(--ink)] px-4 text-[15px] font-semibold leading-5 tracking-[0.005em] text-[var(--panel)] transition-transform hover:-translate-y-0.5 active:translate-y-px"
-              aria-label={`Call ${siteConfig.directPhoneDisplay}`}
+              aria-label={`Call ${siteConfig.realtorName} at ${siteConfig.directPhoneDisplay}`}
             >
               <Phone aria-hidden className="size-4" strokeWidth={1.8} />
               <span className="hidden sm:inline">

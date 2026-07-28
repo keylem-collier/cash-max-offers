@@ -53,13 +53,13 @@ export default function NextStepsPage() {
             <div className="mt-9 grid max-w-lg gap-5">
               <NextStep
                 icon={Clock3}
-                title="The property is reviewed"
-                body="The address, condition, timing, and local market context are checked first."
+                title={`${siteConfig.realtorName} reviews the property`}
+                body="The address, condition, timing, and local market context are considered first."
               />
               <NextStep
                 icon={Phone}
-                title="You get a direct follow-up"
-                body="A real person reaches out to understand the situation and any details still needed."
+                title={`${siteConfig.realtorName} follows up directly`}
+                body="Talk through the situation, your priorities, and any details still needed."
               />
               <NextStep
                 icon={Check}
@@ -74,7 +74,7 @@ export default function NextStepsPage() {
               Want to connect now?
             </p>
             <h2 className="mt-3 text-3xl font-black tracking-[-0.045em]">
-              Reach Cash Max Offers directly.
+              Reach {siteConfig.realtorName} directly.
             </h2>
             <div className="mt-7 grid gap-3">
               {siteConfig.hasDirectPhone ? (
@@ -91,7 +91,7 @@ export default function NextStepsPage() {
                     />
                     <span>
                       <span className="block text-xs font-bold text-[var(--muted)]">
-                        Call or text
+                        Call or text {siteConfig.realtorName}
                       </span>
                       <span className="mt-1 block font-black">
                         {siteConfig.directPhoneDisplay}
