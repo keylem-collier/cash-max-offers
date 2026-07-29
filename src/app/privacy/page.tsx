@@ -5,9 +5,9 @@ import { BrandMark } from "@/components/brand-mark";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Privacy Notice | Cash Max Offers",
+  title: "Privacy Notice | Max Cash Offers",
   description:
-    "How Cash Max Offers handles information submitted through the property request form.",
+    "How Max Cash Offers handles information submitted through the property request form.",
 };
 
 export default function PrivacyPage() {
@@ -33,7 +33,7 @@ export default function PrivacyPage() {
             Privacy notice
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-            This notice explains how Cash Max Offers handles information you
+            This notice explains how Max Cash Offers handles information you
             submit while asking about selling a Georgia property.
           </p>
 
@@ -60,7 +60,7 @@ export default function PrivacyPage() {
               sold as an unrelated marketing list.
             </PrivacySection>
             <PrivacySection title="Calls, texts, and email">
-              By submitting the property form, you ask Cash Max Offers to
+              By submitting the property form, you ask Max Cash Offers to
               contact you about that property. The first release does not use
               the form for recurring automated marketing texts. Consent to
               contact is not a condition of choosing a selling option.

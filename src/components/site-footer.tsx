@@ -68,7 +68,7 @@ export function SiteFooter() {
       </div>
       <div className="mx-auto mt-10 max-w-[1400px] px-4 sm:px-6 lg:px-10">
         <p className="border-t border-[var(--line)] pt-6 text-xs leading-5 text-[var(--muted)]">
-          Cash Max Offers does not guarantee that every property will receive a
+          Max Cash Offers does not guarantee that every property will receive a
           cash offer. Available options, timing, costs, and proceeds depend on
           the property and the transaction. There is no obligation to accept an
           offer or enter a brokerage agreement.

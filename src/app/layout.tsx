@@ -12,14 +12,14 @@ const geist = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: "Cash Home Offers in Atlanta and Across Georgia | Cash Max Offers",
+  title: "Cash Home Offers in Atlanta and Across Georgia | Max Cash Offers",
   description:
     "Compare a possible cash offer with an open-market listing through a licensed, Atlanta-based Georgia realtor. No obligation to sell.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "A cash offer when speed matters | Cash Max Offers",
+    title: "A cash offer when speed matters | Max Cash Offers",
     description:
       "Clear selling options for Atlanta and Georgia homeowners, led by a licensed local realtor.",
     url: "/",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cash Max Offers",
+    title: "Max Cash Offers",
     description:
       "Compare a cash offer with the open market for your Georgia property.",
     images: ["/atlanta-home-hero.png"],

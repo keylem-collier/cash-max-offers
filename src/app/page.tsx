@@ -62,9 +62,9 @@ const faqs = [
       "No repairs are required to start. Property condition is considered when the available paths are reviewed.",
   },
   {
-    question: "Is Cash Max Offers the buyer?",
+    question: "Is Max Cash Offers the buyer?",
     answer:
-      "Cash Max Offers is a licensed-realtor-led service. The source and terms of any offer will be explained before you decide.",
+      "Max Cash Offers is a licensed-realtor-led service. The source and terms of any offer will be explained before you decide.",
   },
   {
     question: "Will I pay fees or commission?",

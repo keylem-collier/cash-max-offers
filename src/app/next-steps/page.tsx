@@ -13,8 +13,8 @@ import { ContactLink } from "@/components/contact-link";
 import { mailHref, siteConfig, telHref } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Your Request Is In | Cash Max Offers",
-  description: "Next steps for your Cash Max Offers property request.",
+  title: "Your Request Is In | Max Cash Offers",
+  description: "Next steps for your Max Cash Offers property request.",
   robots: {
     index: false,
     follow: false,
@@ -104,7 +104,7 @@ export default function NextStepsPage() {
               {siteConfig.hasContactEmail ? (
                 <ContactLink
                   kind="email"
-                  href={mailHref("My Cash Max Offers property request")}
+                  href={mailHref("My Max Cash Offers property request")}
                   className="flex min-h-20 items-center gap-4 rounded-[16px] border border-[var(--line-strong)] bg-[var(--surface)] px-5 transition-transform hover:-translate-y-0.5 active:translate-y-px"
                 >
                   <Mail

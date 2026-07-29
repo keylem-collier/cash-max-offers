@@ -21,7 +21,7 @@ const lead: LeadIntakeValues = {
 };
 
 const business: EmailBusinessConfig = {
-  siteName: "Cash Max Offers",
+  siteName: "Max Cash Offers",
   realtorName: "Licensed Georgia Realtor",
   phoneDisplay: "(404) 555-0179",
   phoneE164: "+14045550179",

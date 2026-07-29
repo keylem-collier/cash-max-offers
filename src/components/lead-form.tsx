@@ -449,7 +449,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             </div>
 
             <p className="text-sm leading-6 text-[var(--muted)]">
-              By submitting, you agree Cash Max Offers may call, text, or email
+              By submitting, you agree Max Cash Offers may call, text, or email
               about this property. Consent isn’t required to choose an option.
               No recurring marketing texts. Read our{" "}
               <Link

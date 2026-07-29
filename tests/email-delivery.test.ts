@@ -21,7 +21,7 @@ const lead: LeadIntakeValues = {
 };
 
 const business: EmailBusinessConfig = {
-  siteName: "Cash Max Offers",
+  siteName: "Max Cash Offers",
   realtorName: "Licensed Georgia Realtor",
   phoneDisplay: "",
   phoneE164: "",
@@ -41,7 +41,7 @@ test("reports success only after owner and seller sends complete", async () => {
   const result = await deliverLead({
     lead,
     business,
-    from: "Cash Max Offers <offers@example.com>",
+    from: "Max Cash Offers <offers@example.com>",
     ownerEmails: ["owner@example.com", "partner@example.com"],
     send: async (request) => {
       requests.push(request);
@@ -65,7 +65,7 @@ test("owner failure rejects the lead delivery", async () => {
     deliverLead({
       lead,
       business,
-      from: "Cash Max Offers <offers@example.com>",
+      from: "Max Cash Offers <offers@example.com>",
       ownerEmails: ["owner@example.com"],
       send: async () => {
         throw new Error("Owner send failed");
@@ -79,7 +79,7 @@ test("seller-only failure preserves owner success", async () => {
   const result = await deliverLead({
     lead,
     business,
-    from: "Cash Max Offers <offers@example.com>",
+    from: "Max Cash Offers <offers@example.com>",
     ownerEmails: ["owner@example.com"],
     send: async (request) => {
       if (request.type === "seller_confirmation") {

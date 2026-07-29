@@ -1,4 +1,4 @@
-# Cash Max Offers High-Conversion Landing Page
+# Max Cash Offers High-Conversion Landing Page
 
 Last reviewed: 2026-07-26
 
@@ -36,7 +36,7 @@ The primary message is:
 ## Current Reality
 
 - The repository began as an empty Git repository.
-- Cash Max Offers is positioned as a licensed-realtor-led advisory path, not an
+- Max Cash Offers is positioned as a licensed-realtor-led advisory path, not an
   anonymous direct-buyer funnel.
 - Realtor identity, brokerage, license, phone, email, headshot, testimonials,
   and numerical claims have not been verified.
@@ -77,7 +77,7 @@ The primary message is:
 
 | Assumption | Why it may be wrong | Verification | Risk |
 | --- | --- | --- | --- |
-| Cash Max Offers can advertise a direct offer | The offer may come from a partner buyer | Broker and owner approval | Misleading advertising |
+| Max Cash Offers can advertise a direct offer | The offer may come from a partner buyer | Broker and owner approval | Misleading advertising |
 | The realtor can advertise under this brand | Brokerage supervision and naming rules apply | Written broker approval | Georgia license violation |
 | Speed and fee claims apply to every lead | Terms vary by buyer and selling path | Approve each claim | False expectations |
 | Phone follow-up is manual | A CRM could later automate messages | Confirm workflow before adding SMS | Consent violation |

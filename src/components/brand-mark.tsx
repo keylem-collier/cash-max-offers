@@ -5,7 +5,7 @@ export function BrandMark() {
     <Link
       href="/"
       className="group inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
-      aria-label="Cash Max Offers home"
+      aria-label="Max Cash Offers home"
     >
       <span
         aria-hidden
@@ -14,7 +14,7 @@ export function BrandMark() {
         CM
       </span>
       <span className="whitespace-nowrap text-[14px] font-bold leading-none tracking-[-0.01em] text-[var(--ink)]">
-        CASH MAX
+        MAX CASH
         <span className="mt-0.5 block font-medium tracking-[0.15em] text-[var(--muted)]">
           OFFERS
         </span>

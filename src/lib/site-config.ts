@@ -16,7 +16,7 @@ const schedulingUrl = readPublicValue(
 );
 
 export const siteConfig = {
-  name: "Cash Max Offers",
+  name: "Max Cash Offers",
   url:
     readPublicValue(process.env.NEXT_PUBLIC_SITE_URL) ||
     "https://cash-max-offers.vercel.app",
