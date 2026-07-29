@@ -11,7 +11,7 @@ export function BrandMark() {
         aria-hidden
         className="grid size-10 place-items-center rounded-[3px] bg-[var(--ink)] text-[11px] font-bold leading-none tracking-normal text-[var(--panel)] transition-transform group-active:translate-y-px"
       >
-        CM
+        MC
       </span>
       <span className="whitespace-nowrap text-[14px] font-bold leading-none tracking-[-0.01em] text-[var(--ink)]">
         MAX CASH
