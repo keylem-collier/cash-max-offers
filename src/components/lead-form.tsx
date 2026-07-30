@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  LoaderCircle,
-  MapPin,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import {
   useEffect,
@@ -23,6 +17,7 @@ import type {
 } from "@/lib/lead-intake";
 import { siteConfig, telHref } from "@/lib/site-config";
 import { ContactLink } from "@/components/contact-link";
+import { AddressSuggestInput } from "@/components/address-suggest-input";
 
 type FormValues = {
   propertyAddress: string;
@@ -91,8 +86,8 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
     setStatusMessage("");
   }
 
-  function continueToContact() {
-    const address = values.propertyAddress.trim();
+  function continueToContact(addressOverride?: string) {
+    const address = (addressOverride ?? values.propertyAddress).trim();
 
     if (address.length < 8 || !/[a-z]/i.test(address) || !/\d/.test(address)) {
       setErrors({
@@ -227,34 +222,21 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
             >
               Property address
             </label>
-            <div className="relative">
-              <MapPin
-                aria-hidden
-                className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[var(--muted)]"
-                strokeWidth={1.8}
-              />
-              <input
-                ref={addressInputRef}
-                id={`property-${compact ? "compact" : "hero"}`}
-                name="propertyAddress"
-                type="text"
-                inputMode="text"
-                autoComplete="street-address"
-                required
-                value={values.propertyAddress}
-                onChange={(event) =>
-                  updateField("propertyAddress", event.target.value)
-                }
-                aria-invalid={Boolean(errors.propertyAddress)}
-                aria-describedby={
-                  errors.propertyAddress
-                    ? `property-error-${compact ? "compact" : "hero"}`
-                    : undefined
-                }
-                className={`${inputClass} pl-12`}
-                placeholder="123 Peachtree Street NE"
-              />
-            </div>
+            <AddressSuggestInput
+              id={`property-${compact ? "compact" : "hero"}`}
+              value={values.propertyAddress}
+              onChange={(next) => updateField("propertyAddress", next)}
+              onSelect={continueToContact}
+              inputRef={addressInputRef}
+              invalid={Boolean(errors.propertyAddress)}
+              describedBy={
+                errors.propertyAddress
+                  ? `property-error-${compact ? "compact" : "hero"}`
+                  : undefined
+              }
+              className={`${inputClass} pl-12`}
+              placeholder="123 Peachtree Street NE"
+            />
             <FieldError
               id={`property-error-${compact ? "compact" : "hero"}`}
               message={errors.propertyAddress}
