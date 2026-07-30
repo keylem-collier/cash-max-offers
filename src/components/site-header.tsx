@@ -24,7 +24,7 @@ export function SiteHeader() {
                 aria-label={`Call ${siteConfig.realtorName} at ${siteConfig.directPhoneDisplay}`}
               >
                 <Phone aria-hidden className="size-4" strokeWidth={1.8} />
-                <span>Call Brad</span>
+                <span>Call {siteConfig.realtorName}</span>
               </ContactLink>
               <ContactLink
                 kind="call"
@@ -33,7 +33,7 @@ export function SiteHeader() {
                 aria-label={`Call ${siteConfig.realtorName} at ${siteConfig.directPhoneDisplay}`}
               >
                 <Phone aria-hidden className="size-4" strokeWidth={1.8} />
-                <span>Call Brad</span>
+                <span>Call {siteConfig.realtorName}</span>
                 <span className="hidden lg:inline">
                   · {siteConfig.directPhoneDisplay}
                 </span>

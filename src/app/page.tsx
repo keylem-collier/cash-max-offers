@@ -1,4 +1,5 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   ArrowRight,
   BadgeCheck,
@@ -11,13 +12,15 @@ import {
   MapPinned,
   Scale,
   ShieldCheck,
-  UserRound,
 } from "lucide-react";
 import { LeadForm } from "@/components/lead-form";
-import { MobileCta } from "@/components/mobile-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteConfig } from "@/lib/site-config";
+
+const MobileCta = dynamic(() =>
+  import("@/components/mobile-cta").then((module) => module.MobileCta),
+);
 
 const sellerSituations = [
   { icon: Hammer, label: "Major repairs" },
@@ -114,11 +117,13 @@ export default function HomePage() {
           <div className="relative lg:min-h-[700px]">
             <div className="relative h-[380px] overflow-hidden border-2 border-[var(--ink)] bg-[var(--surface)] sm:h-[520px] lg:absolute lg:inset-0 lg:h-auto">
               <Image
-                src="/atlanta-home-hero.png"
+                src="/atlanta-home-hero.webp"
                 alt="Atlanta home surrounded by mature Georgia landscaping"
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 56vw"
+                fetchPriority="high"
+                quality={72}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 56vw"
                 className="object-cover object-center"
               />
               <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-[var(--ink)] px-4 py-3 text-[10px] font-semibold uppercase leading-4 tracking-[0.12em] text-[var(--panel)]">
@@ -271,7 +276,7 @@ export default function HomePage() {
                 strokeWidth={1.6}
               />
               <p className="mt-5 text-xl font-black">Local emphasis. Georgia reach.</p>
-              <p className="mt-3 leading-7 text-[var(--forest-copy)]">
+              <p className="mt-3 leading-7 text-[var(--on-dark-copy)]">
                 Strong Atlanta market context with service available statewide.
               </p>
             </div>
@@ -279,20 +284,24 @@ export default function HomePage() {
         </section>
 
         <section className="mx-auto grid max-w-[1400px] gap-8 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[0.74fr_1.26fr] lg:px-10">
-          <div className="grid min-h-[360px] place-items-center border-2 border-[var(--ink)] bg-[var(--ink)] p-8 text-center text-[var(--panel)]">
-            <div className="max-w-xs">
-              <UserRound
-                aria-hidden
-                className="mx-auto size-11 text-[var(--accent-on-dark)]"
-                strokeWidth={1.5}
-              />
-              <p className="mt-5 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--forest-copy)]">
+          <div className="relative min-h-[420px] overflow-hidden border-2 border-[var(--ink)] bg-[var(--ink)] sm:min-h-[480px]">
+            <Image
+              src="/brandon-headshot.webp"
+              alt={`${siteConfig.realtorName}, licensed Georgia realtor`}
+              fill
+              loading="lazy"
+              quality={72}
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover object-[center_20%]"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-[var(--ink)] px-5 py-4 text-[var(--panel)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--on-dark-copy)]">
                 Your local point of contact
               </p>
-              <p className="mt-3 text-5xl font-black uppercase tracking-[-0.06em]">
+              <p className="mt-1 text-3xl font-black uppercase tracking-[-0.06em]">
                 {siteConfig.realtorName}
               </p>
-              <p className="mt-3 font-semibold text-[var(--forest-copy)]">
+              <p className="mt-1 font-semibold text-[var(--on-dark-copy)]">
                 Licensed Georgia Realtor
               </p>
             </div>
@@ -390,7 +399,7 @@ function TrustItem({
         strokeWidth={1.8}
       />
       <p className="mt-4 font-semibold leading-6">{title}</p>
-      <p className="mt-1 text-sm text-[var(--forest-copy)]">{body}</p>
+      <p className="mt-1 text-sm text-[var(--on-dark-copy)]">{body}</p>
     </div>
   );
 }

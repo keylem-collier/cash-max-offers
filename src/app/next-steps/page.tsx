@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  CalendarDays,
-  Check,
-  Clock3,
-  Mail,
-  Phone,
-} from "lucide-react";
+import { ArrowLeft, Mail, Phone } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { CalEmbed } from "@/components/cal-embed";
 import { ContactLink } from "@/components/contact-link";
 import { mailHref, siteConfig, telHref } from "@/lib/site-config";
 
@@ -23,173 +17,130 @@ export const metadata: Metadata = {
 
 export default function NextStepsPage() {
   return (
-    <main className="min-h-[100dvh] bg-[var(--paper)] px-4 py-6 text-[var(--ink)] sm:px-6 sm:py-9">
-      <div className="mx-auto max-w-[1120px]">
+    <main className="relative isolate min-h-[100dvh] overflow-hidden bg-[var(--paper)] px-4 py-6 text-[var(--ink)] sm:px-6 sm:py-9">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.14),transparent_55%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[var(--ink)]/8 via-transparent to-transparent"
+      />
+
+      <div className="relative z-10 mx-auto max-w-[1120px]">
         <header className="flex items-center justify-between">
           <BrandMark />
           <Link
             href="/"
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line-strong)] px-4 text-sm font-bold transition-colors hover:bg-[var(--surface)]"
+            className="inline-flex min-h-11 items-center gap-2 border-2 border-[var(--ink)] bg-[var(--panel)] px-4 text-sm font-semibold transition-colors hover:bg-[var(--surface)]"
           >
             <ArrowLeft aria-hidden className="size-4" strokeWidth={1.8} />
             Back to site
           </Link>
         </header>
 
-        <section className="grid gap-10 py-14 sm:py-20 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16">
-          <div>
-            <span className="grid size-12 place-items-center rounded-full bg-[var(--accent)] text-[var(--forest-deep)]">
-              <Check aria-hidden className="size-6" strokeWidth={2.2} />
-            </span>
-            <h1 className="mt-7 text-balance text-5xl font-black leading-[0.92] tracking-[-0.07em] sm:text-7xl">
-              Your property request is in.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
-              The next step is a straightforward review of the property, your
-              timing, and the selling paths that may fit. There is no
-              obligation to move forward.
+        <section className="mx-auto mt-10 flex w-full max-w-5xl flex-col items-center gap-8 border-2 border-[var(--ink)] bg-[var(--panel)] p-5 text-center sm:mt-14 sm:p-9 md:p-12">
+          <div className="space-y-4">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent-strong)]">
+              {siteConfig.name}
             </p>
-
-            <div className="mt-9 grid max-w-lg gap-5">
-              <NextStep
-                icon={Clock3}
-                title={`${siteConfig.realtorName} reviews the property`}
-                body="The address, condition, timing, and local market context are considered first."
-              />
-              <NextStep
-                icon={Phone}
-                title={`${siteConfig.realtorName} follows up directly`}
-                body="Talk through the situation, your priorities, and any details still needed."
-              />
-              <NextStep
-                icon={Check}
-                title="You decide what happens"
-                body="Compare the available paths and continue only if one makes sense."
-              />
-            </div>
+            <h1 className="text-balance text-5xl font-black uppercase leading-[0.9] tracking-[-0.07em] sm:text-6xl">
+              Your request is in.
+              <span className="mt-2 block text-[var(--accent)]">
+                Talk with {siteConfig.realtorName}.
+              </span>
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg leading-8 text-[var(--muted)]">
+              Pick a time below, or reach {siteConfig.realtorName} directly by
+              phone or email. There is no obligation to move forward.
+            </p>
           </div>
 
-          <aside className="rounded-[24px] border border-[var(--line-strong)] bg-[var(--panel)] p-6 shadow-[0_24px_80px_-48px_rgba(19,54,43,0.42)] sm:p-9">
-            <p className="text-sm font-bold text-[var(--accent-strong)]">
-              Want to connect now?
-            </p>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.045em]">
-              Reach {siteConfig.realtorName} directly.
-            </h2>
-            <div className="mt-7 grid gap-3">
-              {siteConfig.hasDirectPhone ? (
-                <ContactLink
-                  kind="call"
-                  href={telHref()}
-                  className="flex min-h-20 items-center justify-between gap-4 rounded-[16px] border border-[var(--line-strong)] bg-[var(--surface)] px-5 transition-transform hover:-translate-y-0.5 active:translate-y-px"
-                >
-                  <span className="flex items-center gap-4">
-                    <Phone
-                      aria-hidden
-                      className="size-6 text-[var(--accent-strong)]"
-                      strokeWidth={1.7}
-                    />
-                    <span>
-                      <span className="block text-xs font-bold text-[var(--muted)]">
-                        Call or text {siteConfig.realtorName}
-                      </span>
-                      <span className="mt-1 block font-black">
-                        {siteConfig.directPhoneDisplay}
-                      </span>
-                    </span>
-                  </span>
-                </ContactLink>
-              ) : null}
-
-              {siteConfig.hasContactEmail ? (
-                <ContactLink
-                  kind="email"
-                  href={mailHref("My Max Cash Offers property request")}
-                  className="flex min-h-20 items-center gap-4 rounded-[16px] border border-[var(--line-strong)] bg-[var(--surface)] px-5 transition-transform hover:-translate-y-0.5 active:translate-y-px"
-                >
-                  <Mail
-                    aria-hidden
-                    className="size-6 text-[var(--accent-strong)]"
-                    strokeWidth={1.7}
-                  />
-                  <span className="min-w-0">
-                    <span className="block text-xs font-bold text-[var(--muted)]">
-                      Email
-                    </span>
-                    <span className="mt-1 block break-all font-black">
-                      {siteConfig.contactEmail}
-                    </span>
-                  </span>
-                </ContactLink>
-              ) : null}
-
-              {siteConfig.hasScheduling ? (
-                <a
-                  href={siteConfig.schedulingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex min-h-20 items-center gap-4 rounded-[16px] bg-[var(--forest)] px-5 text-[var(--paper)] transition-transform hover:-translate-y-0.5 active:translate-y-px dark:bg-[var(--accent)] dark:text-[var(--forest-deep)]"
-                >
-                  <CalendarDays
-                    aria-hidden
-                    className="size-6"
-                    strokeWidth={1.7}
-                  />
-                  <span>
-                    <span className="block text-xs font-bold opacity-75">
-                      Pick a time
-                    </span>
-                    <span className="mt-1 block font-black">
-                      Open the calendar
-                    </span>
-                  </span>
-                </a>
-              ) : null}
-            </div>
-
-            {!siteConfig.hasDirectPhone && !siteConfig.hasContactEmail ? (
-              <div className="mt-7 rounded-[16px] border border-[var(--line-strong)] bg-[var(--surface)] p-5">
-                <p className="font-black">Direct contact is being finalized.</p>
-                <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                  The verified phone and email must be configured before this
-                  page is launched.
+          <div className="grid w-full gap-4 md:grid-cols-2">
+            {siteConfig.hasDirectPhone ? (
+              <ContactLink
+                kind="call"
+                href={telHref()}
+                className="group border-2 border-[var(--ink)] bg-[var(--ink)] p-6 text-left text-[var(--panel)] transition-transform hover:-translate-y-0.5 active:translate-y-px"
+              >
+                <span className="mb-8 grid size-11 place-items-center bg-[var(--panel)] text-[var(--ink)]">
+                  <Phone aria-hidden className="size-5" strokeWidth={1.7} />
+                </span>
+                <span className="block text-2xl font-black tracking-[-0.04em]">
+                  Call or text
+                </span>
+                <span className="mt-3 block text-sm leading-6 text-[var(--on-dark-copy)]">
+                  Prefer to talk now? Reach {siteConfig.realtorName} at{" "}
+                  {siteConfig.directPhoneDisplay}.
+                </span>
+              </ContactLink>
+            ) : (
+              <div className="border-2 border-[var(--ink)] bg-[var(--surface)] p-6 text-left">
+                <span className="mb-8 grid size-11 place-items-center border border-[var(--ink)] bg-[var(--panel)] text-[var(--accent-strong)]">
+                  <Phone aria-hidden className="size-5" strokeWidth={1.7} />
+                </span>
+                <p className="text-2xl font-black tracking-[-0.04em]">
+                  Call or text
+                </p>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                  Direct phone is being finalized before launch.
                 </p>
               </div>
-            ) : null}
+            )}
 
-            <p className="mt-6 text-xs leading-5 text-[var(--muted)]">
-              If a confirmation email does not arrive, check spam or use one of
-              the direct contact options above.
-            </p>
-          </aside>
+            {siteConfig.hasContactEmail ? (
+              <ContactLink
+                kind="email"
+                href={mailHref("My Max Cash Offers property request")}
+                className="group border-2 border-[var(--ink)] bg-[var(--panel)] p-6 text-left transition-transform hover:-translate-y-0.5 active:translate-y-px"
+              >
+                <span className="mb-8 grid size-11 place-items-center bg-[var(--ink)] text-[var(--panel)]">
+                  <Mail aria-hidden className="size-5" strokeWidth={1.7} />
+                </span>
+                <span className="block text-2xl font-black tracking-[-0.04em]">
+                  Email
+                </span>
+                <span className="mt-3 block break-all text-sm leading-6 text-[var(--muted)]">
+                  Prefer email? Reach {siteConfig.realtorName} at{" "}
+                  {siteConfig.contactEmail}.
+                </span>
+              </ContactLink>
+            ) : (
+              <div className="border-2 border-[var(--ink)] bg-[var(--surface)] p-6 text-left">
+                <span className="mb-8 grid size-11 place-items-center border border-[var(--ink)] bg-[var(--panel)] text-[var(--accent-strong)]">
+                  <Mail aria-hidden className="size-5" strokeWidth={1.7} />
+                </span>
+                <p className="text-2xl font-black tracking-[-0.04em]">Email</p>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                  Direct email is being finalized before launch.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="w-full border-2 border-[var(--ink)] text-left">
+            <div className="border-b-2 border-[var(--ink)] bg-[var(--ink)] px-5 py-4 text-[var(--panel)]">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent-on-dark)]">
+                Pick a time
+              </p>
+              <h2 className="mt-1 text-2xl font-black tracking-[-0.04em]">
+                Book 30 minutes with {siteConfig.realtorName}
+              </h2>
+            </div>
+            <CalEmbed
+              calLink={siteConfig.calLink}
+              realtorName={siteConfig.realtorName}
+            />
+          </div>
+
+          <Link
+            href="/"
+            className="text-sm font-semibold text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+          >
+            Back to {siteConfig.name}
+          </Link>
         </section>
       </div>
     </main>
-  );
-}
-
-function NextStep({
-  icon: Icon,
-  title,
-  body,
-}: {
-  icon: typeof Clock3;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="grid grid-cols-[44px_1fr] gap-4">
-      <span className="grid size-11 place-items-center rounded-[12px] border border-[var(--line-strong)] bg-[var(--surface)]">
-        <Icon
-          aria-hidden
-          className="size-5 text-[var(--accent-strong)]"
-          strokeWidth={1.7}
-        />
-      </span>
-      <div>
-        <h2 className="font-black">{title}</h2>
-        <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{body}</p>
-      </div>
-    </div>
   );
 }

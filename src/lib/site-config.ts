@@ -2,6 +2,19 @@ function readPublicValue(value: string | undefined) {
   return value?.trim() ?? "";
 }
 
+const DEFAULT_SCHEDULING_URL =
+  "https://cal.com/bradford-jones-ncur6v/30min";
+const DEFAULT_CAL_LINK = "bradford-jones-ncur6v/30min";
+
+function calLinkFromSchedulingUrl(url: string) {
+  try {
+    const pathname = new URL(url).pathname.replace(/^\/+|\/+$/g, "");
+    return pathname || DEFAULT_CAL_LINK;
+  } catch {
+    return DEFAULT_CAL_LINK;
+  }
+}
+
 const directPhoneDisplay = readPublicValue(
   process.env.NEXT_PUBLIC_DIRECT_PHONE_DISPLAY,
 );
@@ -11,9 +24,9 @@ const directPhoneE164 = readPublicValue(
 const contactEmail = readPublicValue(
   process.env.NEXT_PUBLIC_CONTACT_EMAIL,
 );
-const schedulingUrl = readPublicValue(
-  process.env.NEXT_PUBLIC_SCHEDULING_URL,
-);
+const schedulingUrl =
+  readPublicValue(process.env.NEXT_PUBLIC_SCHEDULING_URL) ||
+  DEFAULT_SCHEDULING_URL;
 
 export const siteConfig = {
   name: "Max Cash Offers",
@@ -22,7 +35,7 @@ export const siteConfig = {
     "https://cash-max-offers.vercel.app",
   realtorName:
     readPublicValue(process.env.NEXT_PUBLIC_REALTOR_NAME) ||
-    "Brad",
+    "Brandon Walsh",
   brokerageName:
     readPublicValue(process.env.NEXT_PUBLIC_BROKERAGE_NAME) ||
     "Brokerage details pending approval",
@@ -38,6 +51,7 @@ export const siteConfig = {
   privacyEmail:
     readPublicValue(process.env.NEXT_PUBLIC_PRIVACY_EMAIL) || contactEmail,
   schedulingUrl,
+  calLink: calLinkFromSchedulingUrl(schedulingUrl),
   hasDirectPhone: Boolean(directPhoneDisplay && directPhoneE164),
   hasContactEmail: Boolean(contactEmail),
   hasScheduling: Boolean(schedulingUrl),

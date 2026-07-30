@@ -42,7 +42,7 @@ export function MobileCta() {
       <a
         href="#lead-form"
         tabIndex={isSafeZoneVisible ? -1 : undefined}
-        className="flex min-h-13 items-center justify-center gap-2 whitespace-nowrap rounded-[6px] border border-[var(--accent)] bg-[var(--ink)] px-5 text-base font-semibold leading-5 tracking-[0.005em] text-[var(--panel)] shadow-[0_16px_40px_-18px_rgba(13,43,34,0.72)] active:translate-y-px"
+        className="flex min-h-13 items-center justify-center gap-2 whitespace-nowrap rounded-[6px] border border-[var(--accent)] bg-[var(--ink)] px-5 text-base font-semibold leading-5 tracking-[0.005em] text-[var(--panel)] shadow-[0_16px_40px_-18px_rgba(12,12,12,0.72)] active:translate-y-px"
       >
         Get My Cash Offer
         <ArrowRight aria-hidden className="size-4" strokeWidth={1.8} />

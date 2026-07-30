@@ -6,25 +6,23 @@
 
 :root {
   color-scheme: light;
-  --paper: #f1ede4;
-  --paper-alpha: rgba(241, 237, 228, 0.92);
-  --panel: #fffaf0;
-  --surface: #e4ddd0;
-  --input: #fffdf7;
-  --ink: #12281e;
-  --muted: #56645c;
-  --placeholder: #6e7c74;
-  --forest: #12281e;
-  --forest-deep: #0d1d16;
-  --forest-muted: #315d45;
-  --forest-copy: #d3dfd6;
-  --accent: #2f7448;
-  --accent-on-dark: #78c48a;
-  --accent-strong: #245f3b;
-  --accent-soft: rgba(47, 116, 72, 0.17);
-  --line: #d2cabd;
-  --line-strong: #948f86;
-  --input-line: #868a84;
+  --paper: #f2efe6;
+  --paper-alpha: rgba(242, 239, 230, 0.92);
+  --panel: #fffcf5;
+  --surface: #e6e1d4;
+  --input: #fffdf8;
+  --ink: #0c0c0c;
+  --muted: #5e5b53;
+  --placeholder: #7a766c;
+  --ink-deep: #000000;
+  --on-dark-copy: #d8d0bc;
+  --accent: #9c7c2f;
+  --accent-on-dark: #d4af37;
+  --accent-strong: #7e6323;
+  --accent-soft: rgba(156, 124, 47, 0.16);
+  --line: #d4cfc2;
+  --line-strong: #8f8a7e;
+  --input-line: #8a867c;
   --error: #9c2f2f;
   --error-line: #e0b8b8;
   --error-soft: #fbefef;
@@ -65,7 +63,7 @@ summary {
 
 ::selection {
   background: var(--accent);
-  color: var(--forest-deep);
+  color: var(--ink-deep);
 }
 
 summary::-webkit-details-marker {

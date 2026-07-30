@@ -8,6 +8,7 @@ const geist = localFont({
   src: "../../public/fonts/geist-latin.woff2",
   variable: "--font-geist",
   display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -27,9 +28,9 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/atlanta-home-hero.png",
-        width: 1536,
-        height: 1024,
+        url: "/og-home.jpg",
+        width: 1200,
+        height: 630,
         alt: "Elegant Atlanta home surrounded by mature Georgia landscaping",
       },
     ],
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
     title: "Max Cash Offers",
     description:
       "Compare a cash offer with the open market for your Georgia property.",
-    images: ["/atlanta-home-hero.png"],
+    images: ["/og-home.jpg"],
   },
 };
 

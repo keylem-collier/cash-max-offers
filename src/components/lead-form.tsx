@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -58,21 +57,19 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
   const startedTracking = useRef(false);
   const addressInputRef = useRef<HTMLInputElement>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
-  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (step !== "contact") {
       return;
     }
 
-    const focusDelay = reduceMotion ? 0 : 320;
     const focusTimer = window.setTimeout(
       () => phoneInputRef.current?.focus(),
-      focusDelay,
+      0,
     );
 
     return () => window.clearTimeout(focusTimer);
-  }, [reduceMotion, step]);
+  }, [step]);
 
   function markStarted() {
     if (!startedTracking.current) {
@@ -176,10 +173,6 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
     }
   }
 
-  const transition = reduceMotion
-    ? { duration: 0 }
-    : { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const };
-
   return (
     <form
       id={formId}
@@ -195,11 +188,6 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         <div>
           <p className="text-base font-bold leading-6 text-[var(--ink)]">
             {step === "property" ? "Start with the address" : "How should we reach you?"}
-          </p>
-          <p className="mt-1 text-xs text-[var(--muted)]">
-            {step === "property"
-              ? "Step 1 of 2. Address required."
-              : "Step 2 of 2. All fields required."}
           </p>
         </div>
         <div
@@ -231,15 +219,8 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         />
       </div>
 
-      <AnimatePresence mode="wait" initial={false}>
-        {step === "property" ? (
-          <motion.div
-            key="property"
-            initial={reduceMotion ? false : { opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reduceMotion ? undefined : { opacity: 0, x: 10 }}
-            transition={transition}
-          >
+      {step === "property" ? (
+          <div key="property">
             <label
               htmlFor={`property-${compact ? "compact" : "hero"}`}
               className="mb-2 block text-sm font-semibold text-[var(--ink)]"
@@ -294,16 +275,9 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
               Cash-offer request plus a market review. No repairs to start. No
               obligation.
             </p>
-          </motion.div>
+          </div>
         ) : (
-          <motion.div
-            key="contact"
-            initial={reduceMotion ? false : { opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reduceMotion ? undefined : { opacity: 0, x: -10 }}
-            transition={transition}
-            className="grid gap-4"
-          >
+          <div key="contact" className="grid gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label="Phone"
@@ -460,9 +434,8 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
               </Link>
               .
             </p>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </form>
   );
 }
