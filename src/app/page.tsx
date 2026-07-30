@@ -286,7 +286,7 @@ export default function HomePage() {
         <section className="mx-auto grid max-w-[1400px] gap-8 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[0.74fr_1.26fr] lg:px-10">
           <div className="relative min-h-[420px] overflow-hidden border-2 border-[var(--ink)] bg-[var(--ink)] sm:min-h-[480px]">
             <Image
-              src="/brandon-headshot.webp"
+              src="/bradford-headshot.webp"
               alt={`${siteConfig.realtorName}, licensed Georgia realtor`}
               fill
               loading="lazy"
