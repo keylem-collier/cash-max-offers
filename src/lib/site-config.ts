@@ -33,9 +33,7 @@ export const siteConfig = {
   url:
     readPublicValue(process.env.NEXT_PUBLIC_SITE_URL) ||
     "https://cash-max-offers.vercel.app",
-  realtorName:
-    readPublicValue(process.env.NEXT_PUBLIC_REALTOR_NAME) ||
-    "Brandon Walsh",
+  realtorName: "Brandon Walsh",
   brokerageName:
     readPublicValue(process.env.NEXT_PUBLIC_BROKERAGE_NAME) ||
     "Brokerage details pending approval",
