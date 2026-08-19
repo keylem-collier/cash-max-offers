@@ -2,8 +2,13 @@
 
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import type { FunnelType } from "@/lib/lead-intake";
 
-export function MobileCta() {
+export function MobileCta({
+  funnel = "seller",
+}: {
+  funnel?: FunnelType;
+}) {
   const [isSafeZoneVisible, setIsSafeZoneVisible] = useState(false);
 
   useEffect(() => {
@@ -44,7 +49,7 @@ export function MobileCta() {
         tabIndex={isSafeZoneVisible ? -1 : undefined}
         className="flex min-h-13 items-center justify-center gap-2 whitespace-nowrap rounded-[6px] border border-[var(--accent)] bg-[var(--ink)] px-5 text-base font-semibold leading-5 tracking-[0.005em] text-[var(--panel)] shadow-[0_16px_40px_-18px_rgba(12,12,12,0.72)] active:translate-y-px"
       >
-        Get My Cash Offer
+        {funnel === "buyer" ? "Find Fixer-Uppers" : "Get My Cash Offer"}
         <ArrowRight aria-hidden className="size-4" strokeWidth={1.8} />
       </a>
     </div>

@@ -2,8 +2,15 @@ import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
 import { ContactLink } from "@/components/contact-link";
 import { mailHref, siteConfig, telHref } from "@/lib/site-config";
+import type { FunnelType } from "@/lib/lead-intake";
 
-export function SiteFooter() {
+export function SiteFooter({
+  funnel = "seller",
+}: {
+  funnel?: FunnelType;
+}) {
+  const isBuyer = funnel === "buyer";
+
   return (
     <footer
       data-mobile-cta-safe-zone
@@ -11,10 +18,11 @@ export function SiteFooter() {
     >
       <div className="mx-auto grid max-w-[1400px] gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-10">
         <div>
-          <BrandMark />
+          <BrandMark href={isBuyer ? "/atlanta-fixer-upper-homes" : "/"} />
           <p className="mt-5 max-w-sm text-sm leading-6 text-[var(--muted)]">
-            Clear selling options for Georgia homeowners, with direct guidance
-            from {siteConfig.realtorName}, a licensed local realtor.
+            {isBuyer
+              ? `Personalized Metro Atlanta property matching with direct guidance from ${siteConfig.realtorName}, a licensed local realtor.`
+              : `Clear selling options for Georgia homeowners, with direct guidance from ${siteConfig.realtorName}, a licensed local realtor.`}
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2">
@@ -24,6 +32,7 @@ export function SiteFooter() {
               {siteConfig.hasDirectPhone ? (
                 <ContactLink
                   kind="call"
+                  funnel={funnel}
                   href={telHref()}
                   className="w-fit hover:text-[var(--ink)] hover:underline"
                 >
@@ -35,6 +44,7 @@ export function SiteFooter() {
               {siteConfig.hasContactEmail ? (
                 <ContactLink
                   kind="email"
+                  funnel={funnel}
                   href={mailHref()}
                   className="w-fit hover:text-[var(--ink)] hover:underline"
                 >
@@ -68,10 +78,9 @@ export function SiteFooter() {
       </div>
       <div className="mx-auto mt-10 max-w-[1400px] px-4 sm:px-6 lg:px-10">
         <p className="border-t border-[var(--line)] pt-6 text-xs leading-5 text-[var(--muted)]">
-          Max Cash Offers does not guarantee that every property will receive a
-          cash offer. Available options, timing, costs, and proceeds depend on
-          the property and the transaction. There is no obligation to accept an
-          offer or enter a brokerage agreement.
+          {isBuyer
+            ? "Max Cash Offers does not guarantee discounts, property availability, renovation costs, financing eligibility, or future value. Buyers should independently verify property condition, repair estimates, financing, and transaction terms before proceeding."
+            : "Max Cash Offers does not guarantee that every property will receive a cash offer. Available options, timing, costs, and proceeds depend on the property and the transaction. There is no obligation to accept an offer or enter a brokerage agreement."}
         </p>
       </div>
     </footer>

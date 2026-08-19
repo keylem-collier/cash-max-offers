@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {
+  leadRedirectPath,
   validateLeadIntake,
   type LeadIntakeInput,
   type LeadIntakeResponse,
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json<LeadIntakeResponse>({
       ok: true,
-      redirectPath: "/next-steps",
+      redirectPath: leadRedirectPath(validation.values.funnel),
       confirmationEmailSent: delivery.confirmationEmailSent,
     });
   } catch (error) {
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
 
     console.error("Owner lead delivery failed", {
       leadId: validation.values.leadId,
+      funnel: validation.values.funnel,
       stage: configurationError ? "configuration" : "provider",
       error: error instanceof Error ? error.message : "Unknown delivery error",
     });

@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  leadRedirectPath,
   normalizePhone,
   validateLeadIntake,
   type LeadIntakeInput,
 } from "../src/lib/lead-intake.ts";
 
 const validInput: LeadIntakeInput = {
+  funnel: "seller",
   leadId: "lead_test_12345",
   propertyAddress: "123 Peachtree Street NE, Atlanta, GA 30303",
   phone: "(404) 555-0179",
@@ -23,18 +25,74 @@ const validInput: LeadIntakeInput = {
   company: "",
 };
 
+const validBuyerInput: LeadIntakeInput = {
+  funnel: "buyer",
+  leadId: "buyer_test_12345",
+  targetArea: "Decatur, GA 30030",
+  phone: "(404) 555-0180",
+  email: "Buyer@Example.com",
+  budgetRange: "250k_400k",
+  purchaseTimeline: "1_3_months",
+  sourcePath: "/atlanta-fixer-upper-homes",
+  utm: {
+    utm_source: "meta",
+    utm_campaign: "atlanta-fixers",
+    private_value: "discard-me",
+  },
+  startedAt: 234567,
+  company: "",
+};
+
 test("validates and normalizes a complete seller lead", () => {
   const result = validateLeadIntake(validInput);
 
   assert.equal(result.blockedAsSpam, false);
   assert.deepEqual(result.errors, {});
   assert.ok(result.values);
+  assert.equal(result.values.funnel, "seller");
   assert.equal(result.values.email, "seller@example.com");
   assert.equal(result.values.phone, "4045550179");
   assert.deepEqual(result.values.utm, {
     utm_source: "google",
     utm_campaign: "atlanta-sellers",
   });
+});
+
+test("validates and normalizes a complete buyer lead", () => {
+  const result = validateLeadIntake(validBuyerInput);
+
+  assert.equal(result.blockedAsSpam, false);
+  assert.deepEqual(result.errors, {});
+  assert.ok(result.values);
+  assert.equal(result.values.funnel, "buyer");
+  assert.equal(result.values.email, "buyer@example.com");
+  assert.equal(result.values.phone, "4045550180");
+  if (result.values.funnel === "buyer") {
+    assert.equal(result.values.targetArea, "Decatur, GA 30030");
+    assert.equal(result.values.budgetRange, "250k_400k");
+    assert.equal(result.values.purchaseTimeline, "1_3_months");
+  }
+  assert.deepEqual(result.values.utm, {
+    utm_source: "meta",
+    utm_campaign: "atlanta-fixers",
+  });
+});
+
+test("rejects invalid buyer criteria without requiring seller fields", () => {
+  const result = validateLeadIntake({
+    ...validBuyerInput,
+    targetArea: " ",
+    budgetRange: "any",
+    purchaseTimeline: "someday",
+  });
+
+  assert.equal(result.values, null);
+  assert.deepEqual(Object.keys(result.errors).sort(), [
+    "budgetRange",
+    "purchaseTimeline",
+    "targetArea",
+  ]);
+  assert.equal("propertyAddress" in result.errors, false);
 });
 
 test("rejects invalid address, contact details, and enums", () => {
@@ -77,9 +135,31 @@ test("bounds oversized fields and drops unsupported campaign values", () => {
   });
 
   assert.ok(result.values);
-  assert.equal(result.values.propertyAddress.length, 180);
+  assert.equal(result.values.funnel, "seller");
+  if (result.values.funnel === "seller") {
+    assert.equal(result.values.propertyAddress.length, 180);
+  }
   assert.equal(result.values.utm.utm_source.length, 120);
   assert.equal("private_value" in result.values.utm, false);
+});
+
+test("bounds buyer target area and preserves only supported campaign values", () => {
+  const result = validateLeadIntake({
+    ...validBuyerInput,
+    targetArea: `Atlanta ${"A".repeat(300)}`,
+    utm: {
+      utm_content: "x".repeat(200),
+      targetArea: "must-not-pass",
+    },
+  });
+
+  assert.ok(result.values);
+  assert.equal(result.values.funnel, "buyer");
+  if (result.values.funnel === "buyer") {
+    assert.equal(result.values.targetArea.length, 180);
+  }
+  assert.equal(result.values.utm.utm_content.length, 120);
+  assert.equal("targetArea" in result.values.utm, false);
 });
 
 test("normalizes international and domestic phone punctuation", () => {
@@ -95,4 +175,12 @@ test("generates distinct fallback identifiers for malformed lead IDs", () => {
   assert.ok(second.values);
   assert.notEqual(first.values.leadId, second.values.leadId);
   assert.match(first.values.leadId, /^lead-[a-f0-9-]{36}$/);
+});
+
+test("returns a funnel-specific confirmation path", () => {
+  assert.equal(leadRedirectPath("seller"), "/next-steps");
+  assert.equal(
+    leadRedirectPath("buyer"),
+    "/atlanta-fixer-upper-homes/next-steps",
+  );
 });

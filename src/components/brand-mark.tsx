@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-export function BrandMark() {
+export function BrandMark({ href = "/" }: { href?: string }) {
   return (
     <Link
-      href="/"
+      href={href}
       className="group inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
       aria-label="Max Cash Offers home"
     >

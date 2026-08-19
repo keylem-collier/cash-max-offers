@@ -19,3 +19,33 @@ test("rejects valid JSON that is not an intake object", async () => {
   assert.equal(body.ok, false);
   assert.equal(body.message, "The request could not be read. Please try again.");
 });
+
+test("returns buyer-specific validation errors without seller fields", async () => {
+  const response = await POST(
+    new Request("http://localhost/api/lead-intake", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        funnel: "buyer",
+        targetArea: "",
+        phone: "4045550180",
+        email: "buyer@example.com",
+        budgetRange: "any",
+        purchaseTimeline: "someday",
+        company: "",
+      }),
+    }),
+  );
+  const body = (await response.json()) as {
+    ok: boolean;
+    errors: Record<string, string>;
+  };
+
+  assert.equal(response.status, 400);
+  assert.equal(body.ok, false);
+  assert.deepEqual(Object.keys(body.errors).sort(), [
+    "budgetRange",
+    "purchaseTimeline",
+    "targetArea",
+  ]);
+});

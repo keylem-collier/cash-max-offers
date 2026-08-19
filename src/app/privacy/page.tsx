@@ -7,7 +7,7 @@ import { siteConfig } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Privacy Notice | Max Cash Offers",
   description:
-    "How Max Cash Offers handles information submitted through the property request form.",
+    "How Max Cash Offers handles information submitted through seller and buyer request forms.",
 };
 
 export default function PrivacyPage() {
@@ -27,43 +27,47 @@ export default function PrivacyPage() {
 
         <article className="py-14 sm:py-20">
           <p className="text-sm font-bold text-[var(--accent-strong)]">
-            Last updated July 26, 2026
+            Last updated August 19, 2026
           </p>
           <h1 className="mt-4 text-5xl font-black tracking-[-0.065em] sm:text-7xl">
             Privacy notice
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
             This notice explains how Max Cash Offers handles information you
-            submit while asking about selling a Georgia property.
+            submit while asking about selling a Georgia property or finding a
+            Metro Atlanta property to buy.
           </p>
 
           <div className="mt-12 grid gap-10">
             <PrivacySection title="Information we collect">
-              We collect the property address, phone number, email address,
-              desired selling timeline, property condition, page source, and
-              campaign parameters included with your request. We may also
-              collect routine technical information needed to operate and
-              secure the website.
+              Seller requests may include a property address, desired selling
+              timeline, and property condition. Buyer requests may include a
+              target area, purchase budget range, and purchase timeline. Both
+              forms collect a phone number, email address, page source, and
+              campaign parameters included with the request. We may also collect
+              routine technical information needed to operate and secure the
+              website.
             </PrivacySection>
             <PrivacySection title="How we use it">
-              We use the information to review the property, respond to your
-              request, discuss possible selling paths, deliver confirmation
-              messages, measure campaign performance without sending your
-              contact details to advertising platforms, and protect the form
-              from misuse.
+              We use the information to review a seller’s property or build a
+              buyer’s personalized property search, respond to the request,
+              discuss relevant selling or buying paths, deliver confirmation
+              messages, measure campaign performance without sending contact or
+              search details to advertising platforms, and protect the form from
+              misuse.
             </PrivacySection>
             <PrivacySection title="How information is shared">
               Information may be shared with the licensed real-estate
               professional, supervising brokerage, service providers that
-              deliver the website or transactional email, and a potential buyer
-              only when needed to evaluate a selling option. Information is not
-              sold as an unrelated marketing list.
+              deliver the website or transactional email, and parties involved
+              in evaluating an appropriate selling or buying option when needed.
+              Information is not sold as an unrelated marketing list.
             </PrivacySection>
             <PrivacySection title="Calls, texts, and email">
-              By submitting the property form, you ask Max Cash Offers to
-              contact you about that property. The first release does not use
-              the form for recurring automated marketing texts. Consent to
-              contact is not a condition of choosing a selling option.
+              By submitting a seller or buyer form, you ask Max Cash Offers to
+              contact you about that property or search criteria. The forms do
+              not enroll you in recurring automated marketing texts. Consent to
+              contact is not a condition of choosing a selling or buying option.
             </PrivacySection>
             <PrivacySection title="Retention and security">
               Information is kept only as long as reasonably needed to respond,

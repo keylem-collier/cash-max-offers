@@ -1,8 +1,11 @@
 "use client";
 
+import type { FunnelType } from "@/lib/lead-intake";
+
 type FunnelEvent =
   | "form_started"
   | "address_completed"
+  | "area_completed"
   | "lead_submitted"
   | "call_clicked"
   | "email_clicked";
@@ -15,19 +18,26 @@ declare global {
   }
 }
 
-export function trackFunnelEvent(event: FunnelEvent) {
-  window.dataLayer?.push({ event });
-  window.gtag?.("event", event);
-  window.fbq?.("trackCustom", event);
+export function trackFunnelEvent(
+  event: FunnelEvent,
+  funnel: FunnelType = "seller",
+) {
+  const dimensions = { funnel_type: funnel };
+
+  window.dataLayer?.push({ event, ...dimensions });
+  window.gtag?.("event", event, dimensions);
+  window.fbq?.("trackCustom", event, dimensions);
 
   if (event === "call_clicked" || event === "email_clicked") {
-    window.fbq?.("track", "Contact");
+    window.fbq?.("track", "Contact", dimensions);
   }
 }
 
-export function trackLeadConversion() {
-  trackFunnelEvent("lead_submitted");
-  window.fbq?.("track", "Lead");
+export function trackLeadConversion(funnel: FunnelType = "seller") {
+  const dimensions = { funnel_type: funnel };
+
+  trackFunnelEvent("lead_submitted", funnel);
+  window.fbq?.("track", "Lead", dimensions);
 
   const adsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
   const label = process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL;
@@ -35,6 +45,7 @@ export function trackLeadConversion() {
   if (adsId && label) {
     window.gtag?.("event", "conversion", {
       send_to: `${adsId}/${label}`,
+      ...dimensions,
     });
   }
 }

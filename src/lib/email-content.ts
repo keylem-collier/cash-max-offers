@@ -1,7 +1,11 @@
 import {
+  budgetRangeLabel,
   conditionLabel,
+  purchaseTimelineLabel,
   timelineLabel,
+  type BuyerLeadIntakeValues,
   type LeadIntakeValues,
+  type SellerLeadIntakeValues,
 } from "./lead-intake";
 
 export type EmailBusinessConfig = {
@@ -33,12 +37,24 @@ function detailsText(lead: LeadIntakeValues) {
     .map(([key, value]) => `${key}: ${value}`)
     .join("\n");
 
+  const leadDetails =
+    lead.funnel === "buyer"
+      ? [
+          `Target area: ${lead.targetArea}`,
+          `Budget: ${budgetRangeLabel(lead.budgetRange)}`,
+          `Purchase timeline: ${purchaseTimelineLabel(lead.purchaseTimeline)}`,
+        ]
+      : [
+          `Property: ${lead.propertyAddress}`,
+          `Timeline: ${timelineLabel(lead.timeline)}`,
+          `Condition: ${conditionLabel(lead.condition)}`,
+        ];
+
   return [
-    `Property: ${lead.propertyAddress}`,
+    `Funnel: ${lead.funnel}`,
+    ...leadDetails,
     `Phone: ${lead.phone}`,
     `Email: ${lead.email}`,
-    `Timeline: ${timelineLabel(lead.timeline)}`,
-    `Condition: ${conditionLabel(lead.condition)}`,
     `Source: ${lead.sourcePath}`,
     `Lead ID: ${lead.leadId}`,
     utm ? `Campaign details:\n${utm}` : "",
@@ -48,12 +64,23 @@ function detailsText(lead: LeadIntakeValues) {
 }
 
 function detailsHtml(lead: LeadIntakeValues) {
+  const leadRows =
+    lead.funnel === "buyer"
+      ? [
+          ["Target area", lead.targetArea],
+          ["Budget", budgetRangeLabel(lead.budgetRange)],
+          ["Purchase timeline", purchaseTimelineLabel(lead.purchaseTimeline)],
+        ]
+      : [
+          ["Property", lead.propertyAddress],
+          ["Timeline", timelineLabel(lead.timeline)],
+          ["Condition", conditionLabel(lead.condition)],
+        ];
   const rows = [
-    ["Property", lead.propertyAddress],
+    ["Funnel", lead.funnel],
+    ...leadRows,
     ["Phone", lead.phone],
     ["Email", lead.email],
-    ["Timeline", timelineLabel(lead.timeline)],
-    ["Condition", conditionLabel(lead.condition)],
     ["Source", lead.sourcePath],
     ["Lead ID", lead.leadId],
   ];
@@ -73,8 +100,17 @@ export function buildOwnerEmail(
   lead: LeadIntakeValues,
   business: EmailBusinessConfig,
 ): EmailMessage {
-  const subject = `New Georgia seller lead: ${lead.propertyAddress}`;
-  const text = `A homeowner requested selling options through ${business.siteName}.
+  const isBuyer = lead.funnel === "buyer";
+  const subject = isBuyer
+    ? `New Metro Atlanta buyer lead: ${lead.targetArea}`
+    : `New Georgia seller lead: ${lead.propertyAddress}`;
+  const summary = isBuyer
+    ? "A buyer requested personalized fixer-upper matches"
+    : "A homeowner requested selling options";
+  const heading = isBuyer
+    ? "A Metro Atlanta buyer wants fixer-upper matches."
+    : "A Georgia homeowner wants to compare selling options.";
+  const text = `${summary} through ${business.siteName}.
 
 ${detailsText(lead)}
 
@@ -90,7 +126,7 @@ Follow up directly while the request is fresh.`;
             <tr>
               <td style="padding:28px;background:#0c0c0c;color:#fffcf5;">
                 <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#d4af37;">${escapeHtml(business.siteName)}</p>
-                <h1 style="margin:0;font-size:28px;line-height:34px;">A Georgia homeowner wants to compare selling options.</h1>
+                <h1 style="margin:0;font-size:28px;line-height:34px;">${escapeHtml(heading)}</h1>
               </td>
             </tr>
             <tr>
@@ -112,7 +148,7 @@ Follow up directly while the request is fresh.`;
 }
 
 export function buildSellerEmail(
-  lead: LeadIntakeValues,
+  lead: SellerLeadIntakeValues,
   business: EmailBusinessConfig,
 ): EmailMessage {
   const subject = `${business.siteName} received your property request`;
@@ -164,6 +200,73 @@ ${business.siteName}`;
                   <p style="margin:0;font-size:17px;font-weight:700;">${escapeHtml(lead.propertyAddress)}</p>
                 </div>
                 <p style="margin:0 0 22px;color:#5e5b53;font-size:14px;line-height:23px;">There is no obligation to accept an offer or list the property.</p>
+                <div>${phoneButton}${emailButton}</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+
+  return { subject, text, html };
+}
+
+export function buildBuyerEmail(
+  lead: BuyerLeadIntakeValues,
+  business: EmailBusinessConfig,
+): EmailMessage {
+  const subject = `${business.siteName} received your buyer criteria`;
+  const directContact = [
+    business.phoneDisplay ? `Call or text: ${business.phoneDisplay}` : "",
+    business.contactEmail ? `Email: ${business.contactEmail}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const text = `Thanks for sharing your Metro Atlanta property search with ${business.siteName}.
+
+We received your criteria for:
+${lead.targetArea}
+
+Budget: ${budgetRangeLabel(lead.budgetRange)}
+Timeline: ${purchaseTimelineLabel(lead.purchaseTimeline)}
+
+${business.realtorName} will review your criteria and follow up about properties that may fit. Submitting does not guarantee a match or property availability.
+
+${directContact}
+
+${business.realtorName}
+${business.siteName}`;
+  const phoneButton =
+    business.phoneDisplay && business.phoneE164
+      ? `<a href="tel:${escapeHtml(business.phoneE164)}" style="display:inline-block;margin:0 8px 8px 0;padding:13px 18px;border-radius:999px;background:#0c0c0c;color:#fffcf5;font-size:14px;font-weight:700;text-decoration:none;">Call ${escapeHtml(business.phoneDisplay)}</a>`
+      : "";
+  const emailButton = business.contactEmail
+    ? `<a href="mailto:${escapeHtml(business.contactEmail)}" style="display:inline-block;margin:0 8px 8px 0;padding:13px 18px;border:1px solid #8f8a7e;border-radius:999px;color:#0c0c0c;font-size:14px;font-weight:700;text-decoration:none;">Email us</a>`
+    : "";
+  const html = `<!doctype html>
+<html>
+  <body style="margin:0;background:#f2efe6;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#0c0c0c;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;border-collapse:separate;background:#fffcf5;border:1px solid #d4cfc2;border-radius:18px;overflow:hidden;">
+            <tr>
+              <td style="padding:28px;background:#0c0c0c;color:#fffcf5;">
+                <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#d4af37;">${escapeHtml(business.siteName)}</p>
+                <h1 style="margin:0;font-size:30px;line-height:36px;">Your buyer criteria are in.</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px;">
+                <p style="margin:0 0 18px;font-size:16px;line-height:26px;">${escapeHtml(business.realtorName)} will review your Metro Atlanta search and follow up about properties that may fit.</p>
+                <div style="margin:0 0 24px;padding:18px;border-radius:14px;background:#f2efe6;">
+                  <p style="margin:0 0 6px;color:#5e5b53;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;">Target area</p>
+                  <p style="margin:0;font-size:17px;font-weight:700;">${escapeHtml(lead.targetArea)}</p>
+                  <p style="margin:10px 0 0;color:#5e5b53;font-size:14px;line-height:22px;">Budget: ${escapeHtml(budgetRangeLabel(lead.budgetRange))}<br />Timeline: ${escapeHtml(purchaseTimelineLabel(lead.purchaseTimeline))}</p>
+                </div>
+                <p style="margin:0 0 22px;color:#5e5b53;font-size:14px;line-height:23px;">Submitting does not guarantee a match, discount, or property availability.</p>
                 <div>${phoneButton}${emailButton}</div>
               </td>
             </tr>

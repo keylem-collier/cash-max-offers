@@ -1,6 +1,12 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, LoaderCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  LoaderCircle,
+  MapPin,
+} from "lucide-react";
 import Link from "next/link";
 import {
   useEffect,
@@ -10,9 +16,12 @@ import {
 } from "react";
 import { trackFunnelEvent, trackLeadConversion } from "@/lib/analytics";
 import type {
+  BudgetRange,
+  FunnelType,
   LeadIntakeErrors,
   LeadIntakeResponse,
   PropertyCondition,
+  PurchaseTimeline,
   Timeline,
 } from "@/lib/lead-intake";
 import { siteConfig, telHref } from "@/lib/site-config";
@@ -21,26 +30,39 @@ import { AddressSuggestInput } from "@/components/address-suggest-input";
 
 type FormValues = {
   propertyAddress: string;
+  targetArea: string;
   phone: string;
   email: string;
   timeline: "" | Timeline;
   condition: "" | PropertyCondition;
+  budgetRange: "" | BudgetRange;
+  purchaseTimeline: "" | PurchaseTimeline;
   company: string;
 };
 
 const initialValues: FormValues = {
   propertyAddress: "",
+  targetArea: "",
   phone: "",
   email: "",
   timeline: "",
   condition: "",
+  budgetRange: "",
+  purchaseTimeline: "",
   company: "",
 };
 
 const inputClass =
   "min-h-12 w-full rounded-[4px] border border-[var(--input-line)] bg-[var(--input)] px-4 text-base text-[var(--ink)] outline-none transition-[border-color,box-shadow,background-color] placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[color:var(--accent-soft)]";
 
-export function LeadForm({ compact = false }: { compact?: boolean }) {
+export function LeadForm({
+  compact = false,
+  funnel = "seller",
+}: {
+  compact?: boolean;
+  funnel?: FunnelType;
+}) {
+  const isBuyer = funnel === "buyer";
   const formId = compact ? "lead-form-secondary" : "lead-form";
   const [step, setStep] = useState<"property" | "contact">("property");
   const [values, setValues] = useState<FormValues>(initialValues);
@@ -50,6 +72,8 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
   const [leadId] = useState(() => globalThis.crypto.randomUUID());
   const [startedAt] = useState(() => Date.now());
   const startedTracking = useRef(false);
+  const pendingErrorFocus = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const addressInputRef = useRef<HTMLInputElement>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,10 +90,22 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
     return () => window.clearTimeout(focusTimer);
   }, [step]);
 
+  useEffect(() => {
+    if (!pendingErrorFocus.current) {
+      return;
+    }
+
+    pendingErrorFocus.current = false;
+    const firstInvalidField = formRef.current?.querySelector<HTMLElement>(
+      '[aria-invalid="true"] input, input[aria-invalid="true"]',
+    );
+    firstInvalidField?.focus();
+  }, [errors]);
+
   function markStarted() {
     if (!startedTracking.current) {
       startedTracking.current = true;
-      trackFunnelEvent("form_started");
+      trackFunnelEvent("form_started", funnel);
     }
   }
 
@@ -87,18 +123,33 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
   }
 
   function continueToContact(addressOverride?: string) {
-    const address = (addressOverride ?? values.propertyAddress).trim();
+    if (isBuyer) {
+      const targetArea = values.targetArea.trim();
 
-    if (address.length < 8 || !/[a-z]/i.test(address) || !/\d/.test(address)) {
-      setErrors({
-        propertyAddress:
-          "Enter the property street address, including the street number.",
-      });
-      addressInputRef.current?.focus();
-      return;
+      if (targetArea.length < 2 || !/[a-z0-9]/i.test(targetArea)) {
+        setErrors({
+          targetArea: "Enter a Metro Atlanta area, city, or ZIP code.",
+        });
+        addressInputRef.current?.focus();
+        return;
+      }
+    } else {
+      const address = (addressOverride ?? values.propertyAddress).trim();
+
+      if (address.length < 8 || !/[a-z]/i.test(address) || !/\d/.test(address)) {
+        setErrors({
+          propertyAddress:
+            "Enter the property street address, including the street number.",
+        });
+        addressInputRef.current?.focus();
+        return;
+      }
     }
 
-    trackFunnelEvent("address_completed");
+    trackFunnelEvent(
+      isBuyer ? "area_completed" : "address_completed",
+      funnel,
+    );
     setStep("contact");
   }
 
@@ -139,6 +190,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
+          funnel,
           leadId,
           sourcePath: window.location.pathname,
           utm: campaignValues(),
@@ -148,7 +200,9 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
       const result = (await response.json()) as LeadIntakeResponse;
 
       if (!response.ok || !result.ok) {
-        setErrors(result.ok ? {} : result.errors ?? {});
+        const nextErrors = result.ok ? {} : result.errors ?? {};
+        pendingErrorFocus.current = true;
+        setErrors(nextErrors);
         setStatusMessage(
           result.ok
             ? "We could not send your request. Please try again."
@@ -157,7 +211,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
         return;
       }
 
-      trackLeadConversion();
+      trackLeadConversion(funnel);
       window.location.assign(result.redirectPath);
     } catch {
       setStatusMessage(
@@ -170,6 +224,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
 
   return (
     <form
+      ref={formRef}
       id={formId}
       data-mobile-cta-safe-zone
       onSubmit={handleSubmit}
@@ -182,7 +237,11 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
           <p className="text-base font-bold leading-6 text-[var(--ink)]">
-            {step === "property" ? "Start with the address" : "How should we reach you?"}
+            {step === "property"
+              ? isBuyer
+                ? "Start with your search"
+                : "Start with the address"
+              : "How should we reach you?"}
           </p>
         </div>
         <div
@@ -217,35 +276,66 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
       {step === "property" ? (
           <div key="property">
             <label
-              htmlFor={`property-${compact ? "compact" : "hero"}`}
+              htmlFor={`${isBuyer ? "target-area" : "property"}-${compact ? "compact" : "hero"}`}
               className="mb-2 block text-sm font-semibold text-[var(--ink)]"
             >
-              Property address
+              {isBuyer ? "Where do you want to buy?" : "Property address"}
             </label>
-            <AddressSuggestInput
-              id={`property-${compact ? "compact" : "hero"}`}
-              value={values.propertyAddress}
-              onChange={(next) => updateField("propertyAddress", next)}
-              onSelect={continueToContact}
-              inputRef={addressInputRef}
-              invalid={Boolean(errors.propertyAddress)}
-              describedBy={
-                errors.propertyAddress
-                  ? `property-error-${compact ? "compact" : "hero"}`
-                  : undefined
-              }
-              className={`${inputClass} pl-12`}
-              placeholder="123 Peachtree Street NE"
-            />
+            {isBuyer ? (
+              <div className="relative">
+                <MapPin
+                  aria-hidden
+                  className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[var(--muted)]"
+                  strokeWidth={1.8}
+                />
+                <input
+                  ref={addressInputRef}
+                  id={`target-area-${compact ? "compact" : "hero"}`}
+                  name="targetArea"
+                  type="text"
+                  inputMode="text"
+                  autoComplete="address-level2"
+                  required
+                  value={values.targetArea}
+                  onChange={(event) =>
+                    updateField("targetArea", event.target.value)
+                  }
+                  aria-invalid={Boolean(errors.targetArea)}
+                  aria-describedby={
+                    errors.targetArea
+                      ? `target-area-error-${compact ? "compact" : "hero"}`
+                      : undefined
+                  }
+                  className={`${inputClass} pl-12`}
+                  placeholder="Atlanta, Decatur, Marietta, or ZIP codes"
+                />
+              </div>
+            ) : (
+              <AddressSuggestInput
+                id={`property-${compact ? "compact" : "hero"}`}
+                value={values.propertyAddress}
+                onChange={(next) => updateField("propertyAddress", next)}
+                onSelect={continueToContact}
+                inputRef={addressInputRef}
+                invalid={Boolean(errors.propertyAddress)}
+                describedBy={
+                  errors.propertyAddress
+                    ? `property-error-${compact ? "compact" : "hero"}`
+                    : undefined
+                }
+                className={`${inputClass} pl-12`}
+                placeholder="123 Peachtree Street NE"
+              />
+            )}
             <FieldError
-              id={`property-error-${compact ? "compact" : "hero"}`}
-              message={errors.propertyAddress}
+              id={`${isBuyer ? "target-area" : "property"}-error-${compact ? "compact" : "hero"}`}
+              message={isBuyer ? errors.targetArea : errors.propertyAddress}
             />
             <button
               type="submit"
               className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-[6px] bg-[var(--ink)] px-5 text-base font-semibold leading-5 tracking-[0.005em] text-[var(--panel)] transition-transform hover:-translate-y-0.5 active:translate-y-px"
             >
-              Get My Cash Offer
+              {isBuyer ? "Find Fixer-Uppers" : "Get My Cash Offer"}
               <ArrowRight aria-hidden className="size-4" strokeWidth={1.8} />
             </button>
             <p className="mt-4 flex items-start gap-2 text-xs leading-5 text-[var(--muted)]">
@@ -254,8 +344,9 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
                 className="mt-0.5 size-4 shrink-0 text-[var(--accent-strong)]"
                 strokeWidth={2}
               />
-              Cash-offer request plus a market review. No repairs to start. No
-              obligation.
+              {isBuyer
+                ? "Personalized Metro Atlanta matching. No guarantee of a match or property availability."
+                : "Cash-offer request plus a market review. No repairs to start. No obligation."}
             </p>
           </div>
         ) : (
@@ -312,39 +403,89 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
               </Field>
             </div>
 
-            <PillField
-              legend="When would you like to sell?"
-              name="timeline"
-              idPrefix={`timeline-${compact ? "compact" : "hero"}`}
-              value={values.timeline}
-              error={errors.timeline}
-              options={[
-                ["asap", "ASAP"],
-                ["30_days", "30 days"],
-                ["60_90_days", "60-90 days"],
-                ["exploring", "Exploring"],
-              ]}
-              onChange={(value) =>
-                updateField("timeline", value as FormValues["timeline"])
-              }
-            />
+            {isBuyer ? (
+              <>
+                <PillField
+                  legend="What is your purchase budget?"
+                  name="budgetRange"
+                  idPrefix={`budget-${compact ? "compact" : "hero"}`}
+                  value={values.budgetRange}
+                  error={errors.budgetRange}
+                  options={[
+                    ["under_250k", "Under $250K"],
+                    ["250k_400k", "$250K-$400K"],
+                    ["400k_600k", "$400K-$600K"],
+                    ["600k_plus", "$600K+"],
+                    ["not_sure", "Not sure"],
+                  ]}
+                  onChange={(value) =>
+                    updateField(
+                      "budgetRange",
+                      value as FormValues["budgetRange"],
+                    )
+                  }
+                />
 
-            <PillField
-              legend="What shape is the property in?"
-              name="condition"
-              idPrefix={`condition-${compact ? "compact" : "hero"}`}
-              value={values.condition}
-              error={errors.condition}
-              options={[
-                ["move_in_ready", "Move-in ready"],
-                ["minor_work", "Minor work"],
-                ["major_repairs", "Major repairs"],
-                ["not_sure", "Not sure"],
-              ]}
-              onChange={(value) =>
-                updateField("condition", value as FormValues["condition"])
-              }
-            />
+                <PillField
+                  legend="How soon are you ready to buy?"
+                  name="purchaseTimeline"
+                  idPrefix={`purchase-timeline-${compact ? "compact" : "hero"}`}
+                  value={values.purchaseTimeline}
+                  error={errors.purchaseTimeline}
+                  options={[
+                    ["ready_now", "Ready now"],
+                    ["1_3_months", "1-3 months"],
+                    ["3_6_months", "3-6 months"],
+                    ["exploring", "Exploring"],
+                  ]}
+                  onChange={(value) =>
+                    updateField(
+                      "purchaseTimeline",
+                      value as FormValues["purchaseTimeline"],
+                    )
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <PillField
+                  legend="When would you like to sell?"
+                  name="timeline"
+                  idPrefix={`timeline-${compact ? "compact" : "hero"}`}
+                  value={values.timeline}
+                  error={errors.timeline}
+                  options={[
+                    ["asap", "ASAP"],
+                    ["30_days", "30 days"],
+                    ["60_90_days", "60-90 days"],
+                    ["exploring", "Exploring"],
+                  ]}
+                  onChange={(value) =>
+                    updateField("timeline", value as FormValues["timeline"])
+                  }
+                />
+
+                <PillField
+                  legend="What shape is the property in?"
+                  name="condition"
+                  idPrefix={`condition-${compact ? "compact" : "hero"}`}
+                  value={values.condition}
+                  error={errors.condition}
+                  options={[
+                    ["move_in_ready", "Move-in ready"],
+                    ["minor_work", "Minor work"],
+                    ["major_repairs", "Major repairs"],
+                    ["not_sure", "Not sure"],
+                  ]}
+                  onChange={(value) =>
+                    updateField(
+                      "condition",
+                      value as FormValues["condition"],
+                    )
+                  }
+                />
+              </>
+            )}
 
             {statusMessage ? (
               <div
@@ -357,6 +498,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
                     {" "}
                     <ContactLink
                       kind="call"
+                      funnel={funnel}
                       href={telHref()}
                       className="font-bold underline underline-offset-2"
                     >
@@ -393,7 +535,7 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
                   </>
                 ) : (
                   <>
-                    Get My Cash Offer
+                    {isBuyer ? "Send My Criteria" : "Get My Cash Offer"}
                     <ArrowRight
                       aria-hidden
                       className="size-4"
@@ -406,7 +548,9 @@ export function LeadForm({ compact = false }: { compact?: boolean }) {
 
             <p className="text-sm leading-6 text-[var(--muted)]">
               By submitting, you agree Max Cash Offers may call, text, or email
-              about this property. Consent isn’t required to choose an option.
+              {isBuyer
+                ? " about properties that may match your criteria. Submitting does not guarantee a match or availability."
+                : " about this property. Consent isn’t required to choose an option."}{" "}
               No recurring marketing texts. Read our{" "}
               <Link
                 href="/privacy"

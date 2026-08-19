@@ -100,9 +100,10 @@ export async function sendLeadEmails(lead: LeadIntakeValues) {
     },
   }).then((delivery) => {
     if (!delivery.confirmationEmailSent) {
-      console.error("Seller confirmation email failed", {
+      console.error("Lead confirmation email failed", {
         leadId: lead.leadId,
-        error: "Provider rejected the seller confirmation",
+        funnel: lead.funnel,
+        error: "Provider rejected the lead confirmation",
       });
     }
 
