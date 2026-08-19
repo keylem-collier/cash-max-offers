@@ -29,10 +29,12 @@ const buyerLead: BuyerLeadIntakeValues = {
   funnel: "buyer",
   leadId: "buyer_test_12345",
   targetArea: "Decatur, GA 30030",
+  fullName: "Avery Morgan",
   phone: "4045550180",
   email: "buyer@example.com",
   budgetRange: "250k_400k",
   purchaseTimeline: "1_3_months",
+  fundingStatus: "financing_preapproved",
   sourcePath: "/atlanta-fixer-upper-homes",
   utm: { utm_source: "meta" },
   startedAt: 234567,
@@ -77,9 +79,11 @@ test("builds buyer owner and confirmation messages with qualified criteria", () 
   const buyerMessage = buildBuyerEmail(buyerLead, business);
 
   assert.match(ownerMessage.subject, /Metro Atlanta buyer lead/);
+  assert.match(ownerMessage.text, /Avery Morgan/);
   assert.match(ownerMessage.text, /Decatur, GA 30030/);
   assert.match(ownerMessage.text, /\$250K-\$400K/);
   assert.match(ownerMessage.text, /Within 1-3 months/);
+  assert.match(ownerMessage.text, /Financing - preapproved/);
   assert.match(buyerMessage.subject, /received your buyer criteria/);
   assert.match(buyerMessage.text, /does not guarantee a match/i);
   assert.match(buyerMessage.html, /buyer criteria are in/i);
@@ -102,11 +106,13 @@ test("escapes unsafe buyer criteria inside email markup", () => {
   const message = buildOwnerEmail(
     {
       ...buyerLead,
+      fullName: `Avery <script>alert("x")</script>`,
       targetArea: `Atlanta <img src=x onerror="alert(1)">`,
     },
     business,
   );
 
   assert.doesNotMatch(message.html, /<img src=x/);
+  assert.doesNotMatch(message.html, /<script>/);
   assert.match(message.html, /&lt;img/);
 });

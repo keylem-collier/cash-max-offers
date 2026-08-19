@@ -19,6 +19,8 @@ guaranteed discounts, or guaranteed future value.
   Both buyer routes are `noindex, nofollow`.
 - The visual structure, images, responsive classes, and conversion hierarchy
   are inherited from the seller homepage.
+- The buyer hero uses a separate realistic, livable fixer-upper image; the
+  seller homepage retains its existing property image.
 - Bradford Jones is read from the shared site configuration.
 
 ## Integration Truth Gate
@@ -35,7 +37,7 @@ guaranteed discounts, or guaranteed future value.
 | Item | Evidence |
 | --- | --- |
 | Endpoint | `POST /api/lead-intake` |
-| Buyer request | `funnel`, `targetArea`, `budgetRange`, `purchaseTimeline`, phone, email, source path, UTM, timing, honeypot |
+| Buyer request | `funnel`, `targetArea`, `fullName`, `fundingStatus`, `budgetRange`, `purchaseTimeline`, phone, email, source path, UTM, timing, honeypot |
 | Buyer redirect | `/atlanta-fixer-upper-homes/next-steps` |
 | Owner idempotency | `owner/buyer/{leadId}` |
 | Confirmation idempotency | `buyer/{leadId}` |

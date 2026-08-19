@@ -1,6 +1,7 @@
 import {
   budgetRangeLabel,
   conditionLabel,
+  fundingStatusLabel,
   purchaseTimelineLabel,
   timelineLabel,
   type BuyerLeadIntakeValues,
@@ -40,7 +41,9 @@ function detailsText(lead: LeadIntakeValues) {
   const leadDetails =
     lead.funnel === "buyer"
       ? [
+          `Name: ${lead.fullName}`,
           `Target area: ${lead.targetArea}`,
+          `Funding: ${fundingStatusLabel(lead.fundingStatus)}`,
           `Budget: ${budgetRangeLabel(lead.budgetRange)}`,
           `Purchase timeline: ${purchaseTimelineLabel(lead.purchaseTimeline)}`,
         ]
@@ -67,7 +70,9 @@ function detailsHtml(lead: LeadIntakeValues) {
   const leadRows =
     lead.funnel === "buyer"
       ? [
+          ["Name", lead.fullName],
           ["Target area", lead.targetArea],
+          ["Funding", fundingStatusLabel(lead.fundingStatus)],
           ["Budget", budgetRangeLabel(lead.budgetRange)],
           ["Purchase timeline", purchaseTimelineLabel(lead.purchaseTimeline)],
         ]
@@ -102,7 +107,7 @@ export function buildOwnerEmail(
 ): EmailMessage {
   const isBuyer = lead.funnel === "buyer";
   const subject = isBuyer
-    ? `New Metro Atlanta buyer lead: ${lead.targetArea}`
+    ? `New Metro Atlanta buyer lead: ${lead.fullName} - ${lead.targetArea}`
     : `New Georgia seller lead: ${lead.propertyAddress}`;
   const summary = isBuyer
     ? "A buyer requested personalized fixer-upper matches"
@@ -224,13 +229,14 @@ export function buildBuyerEmail(
   ]
     .filter(Boolean)
     .join("\n");
-  const text = `Thanks for sharing your Metro Atlanta property search with ${business.siteName}.
+  const text = `Thanks, ${lead.fullName}, for sharing your Metro Atlanta property search with ${business.siteName}.
 
 We received your criteria for:
 ${lead.targetArea}
 
 Budget: ${budgetRangeLabel(lead.budgetRange)}
 Timeline: ${purchaseTimelineLabel(lead.purchaseTimeline)}
+Funding: ${fundingStatusLabel(lead.fundingStatus)}
 
 ${business.realtorName} will review your criteria and follow up about properties that may fit. Submitting does not guarantee a match or property availability.
 
@@ -260,11 +266,11 @@ ${business.siteName}`;
             </tr>
             <tr>
               <td style="padding:28px;">
-                <p style="margin:0 0 18px;font-size:16px;line-height:26px;">${escapeHtml(business.realtorName)} will review your Metro Atlanta search and follow up about properties that may fit.</p>
+                <p style="margin:0 0 18px;font-size:16px;line-height:26px;">Thanks, ${escapeHtml(lead.fullName)}. ${escapeHtml(business.realtorName)} will review your Metro Atlanta search and follow up about properties that may fit.</p>
                 <div style="margin:0 0 24px;padding:18px;border-radius:14px;background:#f2efe6;">
                   <p style="margin:0 0 6px;color:#5e5b53;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;">Target area</p>
                   <p style="margin:0;font-size:17px;font-weight:700;">${escapeHtml(lead.targetArea)}</p>
-                  <p style="margin:10px 0 0;color:#5e5b53;font-size:14px;line-height:22px;">Budget: ${escapeHtml(budgetRangeLabel(lead.budgetRange))}<br />Timeline: ${escapeHtml(purchaseTimelineLabel(lead.purchaseTimeline))}</p>
+                  <p style="margin:10px 0 0;color:#5e5b53;font-size:14px;line-height:22px;">Funding: ${escapeHtml(fundingStatusLabel(lead.fundingStatus))}<br />Budget: ${escapeHtml(budgetRangeLabel(lead.budgetRange))}<br />Timeline: ${escapeHtml(purchaseTimelineLabel(lead.purchaseTimeline))}</p>
                 </div>
                 <p style="margin:0 0 22px;color:#5e5b53;font-size:14px;line-height:23px;">Submitting does not guarantee a match, discount, or property availability.</p>
                 <div>${phoneButton}${emailButton}</div>

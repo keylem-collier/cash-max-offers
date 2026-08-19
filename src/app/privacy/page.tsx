@@ -42,11 +42,11 @@ export default function PrivacyPage() {
             <PrivacySection title="Information we collect">
               Seller requests may include a property address, desired selling
               timeline, and property condition. Buyer requests may include a
-              target area, purchase budget range, and purchase timeline. Both
-              forms collect a phone number, email address, page source, and
-              campaign parameters included with the request. We may also collect
-              routine technical information needed to operate and secure the
-              website.
+              target area, buyer name, planned funding and preapproval status,
+              purchase budget range, and purchase timeline. Both forms collect
+              a phone number, email address, page source, and campaign parameters
+              included with the request. We may also collect routine technical
+              information needed to operate and secure the website.
             </PrivacySection>
             <PrivacySection title="How we use it">
               We use the information to review a seller’s property or build a

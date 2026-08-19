@@ -28,10 +28,12 @@ test("returns buyer-specific validation errors without seller fields", async () 
       body: JSON.stringify({
         funnel: "buyer",
         targetArea: "",
+        fullName: "",
         phone: "4045550180",
         email: "buyer@example.com",
         budgetRange: "any",
         purchaseTimeline: "someday",
+        fundingStatus: "other",
         company: "",
       }),
     }),
@@ -45,6 +47,8 @@ test("returns buyer-specific validation errors without seller fields", async () 
   assert.equal(body.ok, false);
   assert.deepEqual(Object.keys(body.errors).sort(), [
     "budgetRange",
+    "fullName",
+    "fundingStatus",
     "purchaseTimeline",
     "targetArea",
   ]);

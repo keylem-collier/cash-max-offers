@@ -27,23 +27,32 @@ export const PURCHASE_TIMELINE_VALUES = [
   "exploring",
 ] as const;
 
+export const FUNDING_STATUS_VALUES = [
+  "cash",
+  "financing_preapproved",
+  "financing_not_preapproved",
+] as const;
+
 export type FunnelType = "seller" | "buyer";
 export type Timeline = (typeof TIMELINE_VALUES)[number];
 export type PropertyCondition = (typeof CONDITION_VALUES)[number];
 export type BudgetRange = (typeof BUDGET_RANGE_VALUES)[number];
 export type PurchaseTimeline = (typeof PURCHASE_TIMELINE_VALUES)[number];
+export type FundingStatus = (typeof FUNDING_STATUS_VALUES)[number];
 
 export type LeadIntakeInput = {
   funnel?: unknown;
   leadId?: unknown;
   propertyAddress?: unknown;
   targetArea?: unknown;
+  fullName?: unknown;
   phone?: unknown;
   email?: unknown;
   timeline?: unknown;
   condition?: unknown;
   budgetRange?: unknown;
   purchaseTimeline?: unknown;
+  fundingStatus?: unknown;
   sourcePath?: unknown;
   utm?: unknown;
   startedAt?: unknown;
@@ -69,8 +78,10 @@ export type SellerLeadIntakeValues = CommonLeadIntakeValues & {
 export type BuyerLeadIntakeValues = CommonLeadIntakeValues & {
   funnel: "buyer";
   targetArea: string;
+  fullName: string;
   budgetRange: BudgetRange;
   purchaseTimeline: PurchaseTimeline;
+  fundingStatus: FundingStatus;
 };
 
 export type LeadIntakeValues =
@@ -80,12 +91,14 @@ export type LeadIntakeValues =
 export type LeadIntakeField =
   | "propertyAddress"
   | "targetArea"
+  | "fullName"
   | "phone"
   | "email"
   | "timeline"
   | "condition"
   | "budgetRange"
-  | "purchaseTimeline";
+  | "purchaseTimeline"
+  | "fundingStatus";
 
 export type LeadIntakeErrors = Partial<Record<LeadIntakeField, string>>;
 
@@ -135,6 +148,10 @@ function isBudgetRange(value: string): value is BudgetRange {
 
 function isPurchaseTimeline(value: string): value is PurchaseTimeline {
   return PURCHASE_TIMELINE_VALUES.includes(value as PurchaseTimeline);
+}
+
+function isFundingStatus(value: string): value is FundingStatus {
+  return FUNDING_STATUS_VALUES.includes(value as FundingStatus);
 }
 
 function normalizeUtm(value: unknown) {
@@ -205,11 +222,17 @@ export function validateLeadIntake(input: LeadIntakeInput): {
 
   if (funnel === "buyer") {
     const targetArea = asString(input.targetArea, 180);
+    const fullName = asString(input.fullName, 100);
     const budgetRange = asString(input.budgetRange, 30);
     const purchaseTimeline = asString(input.purchaseTimeline, 30);
+    const fundingStatus = asString(input.fundingStatus, 40);
 
     if (targetArea.length < 2 || !/[a-z0-9]/i.test(targetArea)) {
       errors.targetArea = "Enter a Metro Atlanta area, city, or ZIP code.";
+    }
+
+    if (fullName.length < 2 || !/[a-z]/i.test(fullName)) {
+      errors.fullName = "Enter your name.";
     }
 
     if (!isBudgetRange(budgetRange)) {
@@ -220,13 +243,19 @@ export function validateLeadIntake(input: LeadIntakeInput): {
       errors.purchaseTimeline = "Choose when you expect to buy.";
     }
 
+    if (!isFundingStatus(fundingStatus)) {
+      errors.fundingStatus = "Choose how you plan to buy.";
+    }
+
     if (Object.keys(errors).length === 0) {
       values = {
         ...commonValues,
         funnel,
         targetArea,
+        fullName,
         budgetRange: budgetRange as BudgetRange,
         purchaseTimeline: purchaseTimeline as PurchaseTimeline,
+        fundingStatus: fundingStatus as FundingStatus,
       };
     }
   } else {
@@ -303,6 +332,14 @@ export function purchaseTimelineLabel(value: PurchaseTimeline) {
     "1_3_months": "Within 1-3 months",
     "3_6_months": "Within 3-6 months",
     exploring: "Just exploring",
+  }[value];
+}
+
+export function fundingStatusLabel(value: FundingStatus) {
+  return {
+    cash: "Cash",
+    financing_preapproved: "Financing - preapproved",
+    financing_not_preapproved: "Financing - not yet preapproved",
   }[value];
 }
 

@@ -155,8 +155,8 @@ export default function AtlantaFixerUpperHomesPage() {
           <div className="relative lg:min-h-[700px]">
             <div className="relative h-[380px] overflow-hidden border-2 border-[var(--ink)] bg-[var(--surface)] sm:h-[520px] lg:absolute lg:inset-0 lg:h-auto">
               <Image
-                src="/atlanta-home-hero.webp"
-                alt="Atlanta home surrounded by mature Georgia landscaping"
+                src="/atlanta-fixer-upper-hero.webp"
+                alt="Modest Metro Atlanta brick fixer-upper with mature trees"
                 fill
                 priority
                 fetchPriority="high"

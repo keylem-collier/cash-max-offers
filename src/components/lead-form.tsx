@@ -17,6 +17,7 @@ import {
 import { trackFunnelEvent, trackLeadConversion } from "@/lib/analytics";
 import type {
   BudgetRange,
+  FundingStatus,
   FunnelType,
   LeadIntakeErrors,
   LeadIntakeResponse,
@@ -31,24 +32,28 @@ import { AddressSuggestInput } from "@/components/address-suggest-input";
 type FormValues = {
   propertyAddress: string;
   targetArea: string;
+  fullName: string;
   phone: string;
   email: string;
   timeline: "" | Timeline;
   condition: "" | PropertyCondition;
   budgetRange: "" | BudgetRange;
   purchaseTimeline: "" | PurchaseTimeline;
+  fundingStatus: "" | FundingStatus;
   company: string;
 };
 
 const initialValues: FormValues = {
   propertyAddress: "",
   targetArea: "",
+  fullName: "",
   phone: "",
   email: "",
   timeline: "",
   condition: "",
   budgetRange: "",
   purchaseTimeline: "",
+  fundingStatus: "",
   company: "",
 };
 
@@ -75,6 +80,7 @@ export function LeadForm({
   const pendingErrorFocus = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
   const addressInputRef = useRef<HTMLInputElement>(null);
+  const buyerNameInputRef = useRef<HTMLInputElement>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -83,12 +89,13 @@ export function LeadForm({
     }
 
     const focusTimer = window.setTimeout(
-      () => phoneInputRef.current?.focus(),
+      () =>
+        (isBuyer ? buyerNameInputRef.current : phoneInputRef.current)?.focus(),
       0,
     );
 
     return () => window.clearTimeout(focusTimer);
-  }, [step]);
+  }, [isBuyer, step]);
 
   useEffect(() => {
     if (!pendingErrorFocus.current) {
@@ -172,6 +179,28 @@ export function LeadForm({
     );
   }
 
+  function intakeValues() {
+    return isBuyer
+      ? {
+          targetArea: values.targetArea,
+          fullName: values.fullName,
+          phone: values.phone,
+          email: values.email,
+          budgetRange: values.budgetRange,
+          purchaseTimeline: values.purchaseTimeline,
+          fundingStatus: values.fundingStatus,
+          company: values.company,
+        }
+      : {
+          propertyAddress: values.propertyAddress,
+          phone: values.phone,
+          email: values.email,
+          timeline: values.timeline,
+          condition: values.condition,
+          company: values.company,
+        };
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -189,7 +218,7 @@ export function LeadForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...values,
+          ...intakeValues(),
           funnel,
           leadId,
           sourcePath: window.location.pathname,
@@ -351,6 +380,35 @@ export function LeadForm({
           </div>
         ) : (
           <div key="contact" className="grid gap-4">
+            {isBuyer ? (
+              <Field
+                label="Your name"
+                id={`full-name-${compact ? "compact" : "hero"}`}
+                error={errors.fullName}
+              >
+                <input
+                  ref={buyerNameInputRef}
+                  id={`full-name-${compact ? "compact" : "hero"}`}
+                  name="fullName"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={values.fullName}
+                  onChange={(event) =>
+                    updateField("fullName", event.target.value)
+                  }
+                  aria-invalid={Boolean(errors.fullName)}
+                  aria-describedby={
+                    errors.fullName
+                      ? `full-name-${compact ? "compact" : "hero"}-error`
+                      : undefined
+                  }
+                  className={inputClass}
+                  placeholder="First and last name"
+                />
+              </Field>
+            ) : null}
+
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
                 label="Phone"
@@ -405,6 +463,28 @@ export function LeadForm({
 
             {isBuyer ? (
               <>
+                <PillField
+                  legend="How do you plan to buy?"
+                  name="fundingStatus"
+                  idPrefix={`funding-${compact ? "compact" : "hero"}`}
+                  value={values.fundingStatus}
+                  error={errors.fundingStatus}
+                  options={[
+                    ["cash", "Cash"],
+                    ["financing_preapproved", "Financing - preapproved"],
+                    [
+                      "financing_not_preapproved",
+                      "Financing - not yet preapproved",
+                    ],
+                  ]}
+                  onChange={(value) =>
+                    updateField(
+                      "fundingStatus",
+                      value as FormValues["fundingStatus"],
+                    )
+                  }
+                />
+
                 <PillField
                   legend="What is your purchase budget?"
                   name="budgetRange"

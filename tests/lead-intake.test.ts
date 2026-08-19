@@ -29,10 +29,12 @@ const validBuyerInput: LeadIntakeInput = {
   funnel: "buyer",
   leadId: "buyer_test_12345",
   targetArea: "Decatur, GA 30030",
+  fullName: "Avery Morgan",
   phone: "(404) 555-0180",
   email: "Buyer@Example.com",
   budgetRange: "250k_400k",
   purchaseTimeline: "1_3_months",
+  fundingStatus: "financing_preapproved",
   sourcePath: "/atlanta-fixer-upper-homes",
   utm: {
     utm_source: "meta",
@@ -69,8 +71,10 @@ test("validates and normalizes a complete buyer lead", () => {
   assert.equal(result.values.phone, "4045550180");
   if (result.values.funnel === "buyer") {
     assert.equal(result.values.targetArea, "Decatur, GA 30030");
+    assert.equal(result.values.fullName, "Avery Morgan");
     assert.equal(result.values.budgetRange, "250k_400k");
     assert.equal(result.values.purchaseTimeline, "1_3_months");
+    assert.equal(result.values.fundingStatus, "financing_preapproved");
   }
   assert.deepEqual(result.values.utm, {
     utm_source: "meta",
@@ -82,17 +86,34 @@ test("rejects invalid buyer criteria without requiring seller fields", () => {
   const result = validateLeadIntake({
     ...validBuyerInput,
     targetArea: " ",
+    fullName: " ",
     budgetRange: "any",
     purchaseTimeline: "someday",
+    fundingStatus: "crypto",
   });
 
   assert.equal(result.values, null);
   assert.deepEqual(Object.keys(result.errors).sort(), [
     "budgetRange",
+    "fullName",
+    "fundingStatus",
     "purchaseTimeline",
     "targetArea",
   ]);
   assert.equal("propertyAddress" in result.errors, false);
+});
+
+test("keeps seller validation independent from buyer qualification fields", () => {
+  const result = validateLeadIntake({
+    ...validInput,
+    fullName: "",
+    fundingStatus: "",
+  });
+
+  assert.ok(result.values);
+  assert.equal(result.values.funnel, "seller");
+  assert.equal("fullName" in result.errors, false);
+  assert.equal("fundingStatus" in result.errors, false);
 });
 
 test("rejects invalid address, contact details, and enums", () => {
